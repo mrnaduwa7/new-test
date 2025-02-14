@@ -1,29 +1,54 @@
-const config = require('../config');
-const { cmd, commands } = require('../command');
+const config = require('../config')
+const { cmd, commands } = require('../command')
 
 cmd({
     pattern: "menu",
-    react: "✅",
-    desc: "Show the main menu",
+    react: "🚀",
+    desc: "Interactive Bot Menu",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from, pushname, reply }) => {
+},
+async (conn, mek, m, { from, pushname, reply }) => {
     try {
+        let menu = {
+            main: '', download: '', fun: '', group: '', 
+            owner: '', convert: '', search: '', other: '', news: ''
+        };
+
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].pattern && !commands[i].dontAddCommandList) {
+                menu[commands[i].category] += `✨ *${commands[i].pattern}*\n`;
+            }
+        }
+
+        let madeMenu = `
+╔═══════════════════╗
+║  🚀 *ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1* 🚀
+║   *ɪɴᴛᴇʀᴀᴄᴛɪᴠᴇ ᴍᴇɴᴜ*
+╚═══════════════════╝
+
+🎭 *Hello, ${pushname}!* 🎭
+Welcome to *Mr. Naduwa Bot*!  
+Choose a category below:  
+`;
+
+        let buttons = [
+            { buttonId: "maincmd", buttonText: { displayText: "📌 Main" }, type: 1 },
+            { buttonId: "downloadcmd", buttonText: { displayText: "🎵 Download" }, type: 1 },
+            { buttonId: "funcmd", buttonText: { displayText: "🎭 Fun" }, type: 1 },
+            { buttonId: "groupcmd", buttonText: { displayText: "👥 Group" }, type: 1 },
+            { buttonId: "ownercmd", buttonText: { displayText: "👑 Owner" }, type: 1 },
+            { buttonId: "convertcmd", buttonText: { displayText: "🔄 Convert" }, type: 1 },
+            { buttonId: "searchcmd", buttonText: { displayText: "🔎 Search" }, type: 1 },
+            { buttonId: "othercmd", buttonText: { displayText: "📌 Other" }, type: 1 },
+            { buttonId: "newscmd", buttonText: { displayText: "📰 News" }, type: 1 }
+        ];
+
         let buttonMessage = {
             image: { url: config.ALIVE_IMG },
-            caption: `🔥 *𝐌𝐑.𝐍𝐀𝐃𝐔𝐖𝐀-𝐕𝟏* 🔥\n\n👋 Hello, *${pushname}*\n📅 Date: *${new Date().toLocaleDateString()}*\n🕒 Time: *${new Date().toLocaleTimeString()}*\n\n🎛 *Choose a Menu Below:*`,
-            footer: "✨ Powered by MR NADUWA",
-            buttons: [
-                { buttonId: "menu_owner", buttonText: { displayText: "👨‍💻 Owner Menu" }, type: 1 },
-                { buttonId: "menu_download", buttonText: { displayText: "📥 Download Menu" }, type: 1 },
-                { buttonId: "menu_movie", buttonText: { displayText: "🎬 Movie Menu" }, type: 1 },
-                { buttonId: "menu_convert", buttonText: { displayText: "🌐 Convert Menu" }, type: 1 },
-                { buttonId: "menu_group", buttonText: { displayText: "📖 Group Menu" }, type: 1 },
-                { buttonId: "menu_fun", buttonText: { displayText: "🎭 Fun Menu" }, type: 1 },
-                { buttonId: "menu_search", buttonText: { displayText: "🔍 Search Menu" }, type: 1 },
-                { buttonId: "menu_news", buttonText: { displayText: "📰 News Menu" }, type: 1 },
-                { buttonId: "menu_other", buttonText: { displayText: "🔧 Other Menu" }, type: 1 }
-            ],
+            caption: madeMenu,
+            footer: "⚡ Powered by Mr. Naduwa ⚡",
+            buttons: buttons,
             headerType: 4
         };
 
@@ -31,35 +56,54 @@ cmd({
 
     } catch (e) {
         console.log(e);
-        reply(`Error: ${e}`);
+        reply(`❌ Error: ${e}`);
     }
 });
 
-// ✅ **Handling Button Clicks**
-cmd({
-    pattern: "",
-    fromMe: false
-}, async (conn, mek, m, { from, isButton, buttonId, reply }) => {
+// Handle Button Clicks
+conn.on("message", async (message) => {
     try {
-        if (!isButton) return; // Ensure it's a button interaction
+        const { from } = message;
 
-        let menus = {
-            menu_owner: "👨‍💻 *Owner Menu*\n- !owner1\n- !owner2\n...",
-            menu_download: "📥 *Download Menu*\n- !ytmp3\n- !ytmp4\n...",
-            menu_movie: "🎬 *Movie Menu*\n- !imdb\n- !netflix\n...",
-            menu_convert: "🌐 *Convert Menu*\n- !toimg\n- !tomp3\n...",
-            menu_group: "📖 *Group Menu*\n- !kick\n- !add\n...",
-            menu_fun: "🎭 *Fun Menu*\n- !joke\n- !meme\n...",
-            menu_search: "🔍 *Search Menu*\n- !google\n- !wiki\n...",
-            menu_news: "📰 *News Menu*\n- !news\n- !weather\n...",
-            menu_other: "🔧 *Other Menu*\n- !ping\n- !help\n..."
-        };
+        if (message.message?.buttonsResponseMessage) {
+            let buttonId = message.message.buttonsResponseMessage.selectedButtonId;
+            let response = "";
 
-        if (menus[buttonId]) {
-            await reply(menus[buttonId]); // Send the correct menu when a button is clicked
+            switch (buttonId) {
+                case "maincmd":
+                    response = `📌 *Main Commands:* \n${menu.main}`;
+                    break;
+                case "downloadcmd":
+                    response = `🎵 *Download Commands:* \n${menu.download}`;
+                    break;
+                case "funcmd":
+                    response = `🎭 *Fun Commands:* \n${menu.fun}`;
+                    break;
+                case "groupcmd":
+                    response = `👥 *Group Commands:* \n${menu.group}`;
+                    break;
+                case "ownercmd":
+                    response = `👑 *Owner Commands:* \n${menu.owner}`;
+                    break;
+                case "convertcmd":
+                    response = `🔄 *Convert Commands:* \n${menu.convert}`;
+                    break;
+                case "searchcmd":
+                    response = `🔎 *Search Commands:* \n${menu.search}`;
+                    break;
+                case "othercmd":
+                    response = `📌 *Other Commands:* \n${menu.other}`;
+                    break;
+                case "newscmd":
+                    response = `📰 *News Commands:* \n${menu.news}`;
+                    break;
+                default:
+                    response = "❌ Invalid selection!";
+            }
+
+            await conn.sendMessage(from, { text: response });
         }
     } catch (e) {
-        console.log(e);
-        reply(`Error handling button: ${e}`);
+        console.log("Error handling button:", e);
     }
 });
