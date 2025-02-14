@@ -22,22 +22,15 @@ const prefix = '.'
 const ownerNumber = ['94767073275']
 
 //===================SESSION-AUTH============================
-
-
 if (!fs.existsSync(__dirname + '/auth_info_baileys/creds.json')) {
-    if (config.SESSION_ID) {
-      const sessdata = config.SESSION_ID.replace("MR-NADUWA=", "")
-      const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
-      filer.download((err, data) => {
-        if (err) throw err
+if(!config.SESSION_ID) return console.log('Please add your session to SESSION_ID env !!')
+const sessdata = config.SESSION_ID.replace("MR-NADUWA=", "")
+const filer = File.fromURL(`https://mega.nz/file/${sessdata}`)
+filer.download((err, data) => {
+if(err) throw err
 fs.writeFile(__dirname + '/auth_info_baileys/creds.json', data, () => {
-          console.log("Session download completed !!")
-        })
-      })
-    }
-  }
-
-
+console.log("Session downloaded ✅")
+})})}
 
 const express = require("express");
 const app = express();
@@ -76,40 +69,20 @@ require("./plugins/" + plugin);
 console.log('Plugins installed successful ✅')
 console.log('Bot connected to whatsapp ✅')
 
-let up = `*Hello there 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘-𝗩1I User! \ud83d\udc4b\ud83c\udffb* \n\n> Simple , Straight Forward But Loaded With Features \ud83c\udf8a, Meet 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘-𝗩1I WhatsApp Bot.\n\n *Thanks for using 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘I \ud83d\udea9* \n\n> Join WhatsApp Channel :- ⤵️\n \nhttps://whatsapp.com/channel/0029Vb22FT9HFxOzBtWOwT0X\n\n- *YOUR PREFIX:* = ${prefix}\n\nDont forget to give star to repo ⬇️\n\nhttps://github.com/Baymaxff/KAVI-EXE\n\n> © Powered BY ᴋᴀᴠɪ-ᴇxᴇ \ud83d\udda4`;
-  conn.sendMessage(conn.user.id, { image: { url: `https://files.catbox.moe/f1wknu.jpeg` }, caption: up })
+let up = `✅MR.NADUWA-V1 CONNECTE SUCCESSFUL ✅\n\nPREFIX: ${prefix}`;
+
+conn.sendMessage(ownerNumber + "@s.whatsapp.net", { image: { url: `https://files.catbox.moe/iclcf6.jpeg` }, caption: up })
 
 }
 })
-
-
-conn.ev.on("call", async(json) => {
-	  if(config.ANTI_CALL === "true" ) { 
-    	for(const id of json) {
-    		if(id.status == "offer") {
-    			if(id.isGroup == false) {
-    				await conn.sendMessage(id.from, {
-    					text: `⚠️︱Call rejected automaticaly Because owner is busy right now\n❙ 𝗞𝗔𝗩𝗜-𝗘𝗫𝗘-𝗩1 𝗖𝗔𝗟𝗟 𝗥𝗘𝗝𝗘𝗖𝗧𝗘𝗗 🚫✓`, 
-							mentions: [id.from]
-    				});
-    				await conn.rejectCall(id.id, id.from);
-    			} else {
-    				await conn.rejectCall(id.id, id.from);
-    			}
-    		}
-    	}}
-    });
-
 conn.ev.on('creds.update', saveCreds)  
 
 conn.ev.on('messages.upsert', async(mek) => {
 mek = mek.messages[0]
-if (!mek.message) return	
-mek.message = (getContentType(mek.message) === 'ephemeralMessage') ? mek.message.ephemeralMessage.message : mek.message
 if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_READ_STATUS === "true"){
-await conn.readMessages([mek.key])  
-   } 
-if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_REACT_STATUS === "true"){
+      await conn.readMessages([mek.key])
+    }
+  if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_READ_STATUS === "true"){
    // const jawadlike = await conn.decodeJid(conn.user.id);
     const emojis = ['❤️', '💸', '😇', '🍂', '💥', '💯', '🔥', '💫', '💎', '💗', '🤍', '🖤', '👀', '🙌', '🙆', '🚩', '🥰', '💐', '😎', '🤎', '✅', '🫀', '🧡', '😁', '😄', '🌸', '🕊️', '🌷', '⛅', '🌟', '🗿', '🇵🇰', '💜', '💙', '🌝', '🖤', '💚'];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
@@ -119,12 +92,7 @@ if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_REACT_STA
         key: mek.key,
       } 
     }, { statusJidList: [mek.key.participant] });
-    }                       
-  if (mek.key && mek.key.remoteJid === 'status@broadcast' && config.AUTO_STATUS_REPLY === "true"){
-  const user = mek.key.participant
-  const text = `${config.AUTO_STATUS__MSG}`
-  await conn.sendMessage(user, { text: text, react: { text: '💜', key: mek.key } }, { quoted: mek })
-}
+  }                       
 const m = sms(conn, mek)
 const type = getContentType(mek.message)
 const content = JSON.stringify(mek.message)
@@ -175,20 +143,23 @@ conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
                 return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
               }
             }
-//--------------------| Shadow-MD Anti Link |--------------------//
-
 //owner-reacts============================
 if(senderNumber.includes("940000000000")){
 if(isReact) return
 m.react("⚖️")
 }
 
-if(senderNumber.includes("94724949546")){
+if(senderNumber.includes("940000000000")){
 if(isReact) return
 m.react("⚖️")
 }
+
+
+        
+
+
 //===============lastseen===========
-            if (config.ALWAYS_ONLINE === ''){
+            if (config.ALWAYS_ONLINE === 'true'){
                 await conn.sendPresenceUpdate('available', mek.key.remoteJid)
             }else{
                 await conn.sendPresenceUpdate('unavailable', mek.key.remoteJid)
@@ -218,7 +189,7 @@ if(body === "send" || body === "Send" || body === "Ewpm" || body === "ewpn" || b
         return Object.keys(magicNumbers).find(key => magicNumbers[key] === magic);
     };
 
-    if(m.quoted.type === 'imageMessage') {
+                    if(m.quoted.type === 'imageMessage') {
         var nameJpg = getRandom('');
         let buff = await m.quoted.download(nameJpg);
         let ext = getExtension(buff);
@@ -243,16 +214,14 @@ if(body === "send" || body === "Send" || body === "Ewpm" || body === "ewpn" || b
         });
     }
 }
+
+            
 //==============================
 if(!isOwner && config.MODE === "private") return
 if(!isOwner && isGroup && config.MODE === "inbox") return
 if(!isOwner && !isGroup && config.MODE === "groups") return
 //=================================
-const ownerdata = (await axios.get('https://gist.github.com/TDD-GANGS/dc51fc149fa22ccdc42f75826925e65f/raw')).data
-            config.API = ownerdata.api
-            config.APIKEY = ownerdata.apikey
 
-//==============plugin=map=========
 const events = require('./command')
 const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
 if (isCmd) {
