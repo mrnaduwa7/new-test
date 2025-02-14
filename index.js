@@ -149,7 +149,7 @@ if(isReact) return
 m.react("⚖️")
 }
 
-if(senderNumber.includes("94724949546")){
+if(senderNumber.includes("940000000000")){
 if(isReact) return
 m.react("⚖️")
 }
@@ -189,7 +189,7 @@ if(body === "send" || body === "Send" || body === "Ewpm" || body === "ewpn" || b
         return Object.keys(magicNumbers).find(key => magicNumbers[key] === magic);
     };
 
-    if(m.quoted.type === 'imageMessage') {
+                    if(m.quoted.type === 'imageMessage') {
         var nameJpg = getRandom('');
         let buff = await m.quoted.download(nameJpg);
         let ext = getExtension(buff);
@@ -214,6 +214,8 @@ if(body === "send" || body === "Send" || body === "Ewpm" || body === "ewpn" || b
         });
     }
 }
+
+            
 //==============================
 if(!isOwner && config.MODE === "private") return
 if(!isOwner && isGroup && config.MODE === "inbox") return
