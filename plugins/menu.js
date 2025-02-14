@@ -1,70 +1,70 @@
 const config = require('../config');
-const { cmd } = require('../command');
+const { cmd, commands } = require('../command');
+const { Button, ButtonCollection } = require('whatsapp-web.js'); // Make sure to import the button collection
 
 cmd({
     pattern: "menu",
-    react: "📜",
-    desc: "Interactive Carousel Menu",
+    react: "🇱🇰",
+    desc: "get cmd list",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from, reply }) => {
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
     try {
-        const mainMenu = {
-            text: "📜 *Main Menu* 📜\nChoose a category below:",
-            footer: "🔄 Click a button to navigate",
-            buttons: [
-                { buttonId: "menu_download", buttonText: { displayText: "📥 Download" }, type: 1 },
-                { buttonId: "menu_fun", buttonText: { displayText: "🎭 Fun" }, type: 1 },
-                { buttonId: "menu_tools", buttonText: { displayText: "🛠 Tools" }, type: 1 }
-            ],
-            headerType: 1
+        let menu = {
+            main: '',
+            download: '',
+            fun: '',
+            group: '',
+            owner: '',
+            convert: '',
+            search: '',
+            other: '',
+            news: ''
         };
 
-        await conn.sendMessage(from, mainMenu, { quoted: mek });
-
-    } catch (e) {
-        console.log(e);
-        reply(`${e}`);
-    }
-});
-
-// Submenu handler
-cmd({
-    on: "text",
-}, async (conn, mek, m, { from, body, reply }) => {
-    try {
-        if (body.startsWith("menu_")) {
-            let menuType = body.split("_")[1];
-
-            let subMenu = {
-                text: `📜 *${menuType.toUpperCase()} Menu* 📜\nChoose an option below:`,
-                footer: "🔄 Click a button to navigate",
-                buttons: [],
-                headerType: 1
-            };
-
-            if (menuType === "download") {
-                subMenu.buttons = [
-                    { buttonId: "cmd_ytdl", buttonText: { displayText: "🎞 YouTube DL" }, type: 1 },
-                    { buttonId: "cmd_instadl", buttonText: { displayText: "📷 Instagram DL" }, type: 1 },
-                    { buttonId: "menu", buttonText: { displayText: "🔙 Back to Menu" }, type: 1 }
-                ];
-            } else if (menuType === "fun") {
-                subMenu.buttons = [
-                    { buttonId: "cmd_joke", buttonText: { displayText: "😂 Joke" }, type: 1 },
-                    { buttonId: "cmd_meme", buttonText: { displayText: "🤣 Meme" }, type: 1 },
-                    { buttonId: "menu", buttonText: { displayText: "🔙 Back to Menu" }, type: 1 }
-                ];
-            } else if (menuType === "tools") {
-                subMenu.buttons = [
-                    { buttonId: "cmd_calc", buttonText: { displayText: "🧮 Calculator" }, type: 1 },
-                    { buttonId: "cmd_qr", buttonText: { displayText: "📸 QR Code" }, type: 1 },
-                    { buttonId: "menu", buttonText: { displayText: "🔙 Back to Menu" }, type: 1 }
-                ];
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].pattern && !commands[i].dontAddCommandList) {
+                menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
             }
-
-            await conn.sendMessage(from, subMenu, { quoted: mek });
         }
+
+        let madeMenu = `*╭─────────────────❒⁠⁠⁠⁠*
+
+*⇆ ʜɪɪ ᴍʏ ᴅᴇᴀʀ ғʀɪᴇɴᴅ ⇆*
+
+     *${pushname}*
+
+*┕─────────────────❒*
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━
+   *ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1 ғᴜʟʟ ᴄᴏᴍᴍᴀɴᴅ ʟɪsᴛ*
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+*ᴄʀᴇᴀᴛᴇᴅ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ👨🏻‍💻*
+
+`;
+
+        let buttons = [
+            new Button("Download Commands", `/${menu.download}`, 'primary'),
+            new Button("Fun Commands", `/${menu.fun}`, 'primary'),
+            new Button("Main Commands", `/${menu.main}`, 'primary'),
+            new Button("Group Commands", `/${menu.group}`, 'primary'),
+            new Button("Owner Commands", `/${menu.owner}`, 'primary'),
+            new Button("Convert Commands", `/${menu.convert}`, 'primary'),
+            new Button("Search Commands", `/${menu.search}`, 'primary'),
+            new Button("Other Commands", `/${menu.other}`, 'primary'),
+            new Button("News Menu", `/${menu.news}`, 'primary'),
+        ];
+
+        let buttonCollection = new ButtonCollection(...buttons);
+
+        // Send message with buttons
+        await conn.sendMessage(from, {
+            image: { url: config.ALIVE_IMG },
+            caption: madeMenu,
+            buttons: buttonCollection
+        }, { quoted: mek });
+
     } catch (e) {
         console.log(e);
         reply(`${e}`);
