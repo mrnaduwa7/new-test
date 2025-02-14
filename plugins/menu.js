@@ -1,110 +1,72 @@
 const config = require('../config');
-const { cmd, commands } = require('../command');
+const { cmd } = require('../command');
 
 cmd({
     pattern: "menu",
-    react: "🇱🇰",
-    desc: "Get command list",
+    react: "📜",
+    desc: "Interactive Carousel Menu",
     category: "main",
     filename: __filename
-},
-async (conn, mek, m, { from, quoted, pushname, reply }) => {
+}, async (conn, mek, m, { from, reply }) => {
     try {
-        // Step 1: Show Animated Loading Effect
-        let loadingStages = ["⌛ Loading", "⌛ Loading.", "⌛ Loading..", "⌛ Loading..."];
-        for (let i = 0; i < loadingStages.length; i++) {
-            await conn.sendMessage(from, { text: loadingStages[i] }, { quoted: mek });
-            await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
-        }
-
-        // Step 2: Define Categories & Buttons
-        let categories = {
-            main: "📌 Main Commands",
-            download: "📥 Download Commands",
-            fun: "🎭 Fun Commands",
-            group: "👥 Group Commands",
-            owner: "👑 Owner Commands",
-            convert: "🔄 Convert Commands",
-            search: "🔎 Search Commands",
-            other: "📚 Other Commands",
-            news: "📰 News Commands"
+        const mainMenu = {
+            text: "📜 *Main Menu* 📜\nChoose a category below:",
+            footer: "🔄 Click a button to navigate",
+            buttons: [
+                { buttonId: "menu_download", buttonText: { displayText: "📥 Download" }, type: 1 },
+                { buttonId: "menu_fun", buttonText: { displayText: "🎭 Fun" }, type: 1 },
+                { buttonId: "menu_tools", buttonText: { displayText: "🛠 Tools" }, type: 1 }
+            ],
+            headerType: 1
         };
 
-        let mainButtons = [
-            { buttonId: "help", buttonText: { displayText: "❓ Help" }, type: 1 },
-            { buttonId: "owner", buttonText: { displayText: "👤 Owner" }, type: 1 },
-            { buttonId: "updates", buttonText: { displayText: "🔔 Updates" }, type: 1 }
-        ];
-
-        let categoryButtons = [];
-        let menuText = `*🔹 Hello ${pushname}, Welcome to MR.NADUWA Bot!* 🔹\n\n`;
-
-        // Step 3: Build Category-wise Command Lists & Buttons
-        for (let category in categories) {
-            let categoryCommands = commands.filter(cmd => cmd.category === category && cmd.pattern && !cmd.dontAddCommandList);
-            
-            if (categoryCommands.length > 0) {
-                menuText += `\n*╭───❒ ${categories[category]} ❒───╮*\n`;
-
-                for (let cmd of categoryCommands) {
-                    let buttonId = cmd.pattern;
-                    menuText += `*➤* ${cmd.pattern}\n`;
-                    categoryButtons.push({ buttonId: buttonId, buttonText: { displayText: `🔹 ${cmd.pattern}` }, type: 1 });
-                }
-
-                menuText += `*╰───────────────────────❒*\n`;
-            }
-        }
-
-        // Step 4: Send Menu with Buttons
-        await conn.sendMessage(from, {
-            image: { url: config.ALIVE_IMG },
-            caption: menuText,
-            footer: "Choose an option below 👇",
-            buttons: [...categoryButtons, ...mainButtons],
-            headerType: 4
-        }, { quoted: mek });
+        await conn.sendMessage(from, mainMenu, { quoted: mek });
 
     } catch (e) {
         console.log(e);
-        reply(`❌ Error: ${e}`);
+        reply(`${e}`);
     }
 });
 
-// 🛠️ Handle Button Click Events
+// Submenu handler
 cmd({
-    pattern: "",
-    onButton: true
-},
-async (conn, mek, m, { from, buttonId, reply }) => {
+    on: "text",
+}, async (conn, mek, m, { from, body, reply }) => {
     try {
-        if (!buttonId) return;
+        if (body.startsWith("menu_")) {
+            let menuType = body.split("_")[1];
 
-        // If it's a command button, execute that command
-        let cmdToRun = commands.find(cmd => cmd.pattern === buttonId);
-        if (cmdToRun) {
-            reply(`🔹 Executing command: *${buttonId}*`);
-            await cmdToRun.execute(conn, mek, m);
-            return;
+            let subMenu = {
+                text: `📜 *${menuType.toUpperCase()} Menu* 📜\nChoose an option below:`,
+                footer: "🔄 Click a button to navigate",
+                buttons: [],
+                headerType: 1
+            };
+
+            if (menuType === "download") {
+                subMenu.buttons = [
+                    { buttonId: "cmd_ytdl", buttonText: { displayText: "🎞 YouTube DL" }, type: 1 },
+                    { buttonId: "cmd_instadl", buttonText: { displayText: "📷 Instagram DL" }, type: 1 },
+                    { buttonId: "menu", buttonText: { displayText: "🔙 Back to Menu" }, type: 1 }
+                ];
+            } else if (menuType === "fun") {
+                subMenu.buttons = [
+                    { buttonId: "cmd_joke", buttonText: { displayText: "😂 Joke" }, type: 1 },
+                    { buttonId: "cmd_meme", buttonText: { displayText: "🤣 Meme" }, type: 1 },
+                    { buttonId: "menu", buttonText: { displayText: "🔙 Back to Menu" }, type: 1 }
+                ];
+            } else if (menuType === "tools") {
+                subMenu.buttons = [
+                    { buttonId: "cmd_calc", buttonText: { displayText: "🧮 Calculator" }, type: 1 },
+                    { buttonId: "cmd_qr", buttonText: { displayText: "📸 QR Code" }, type: 1 },
+                    { buttonId: "menu", buttonText: { displayText: "🔙 Back to Menu" }, type: 1 }
+                ];
+            }
+
+            await conn.sendMessage(from, subMenu, { quoted: mek });
         }
-
-        // Handle custom buttons
-        switch (buttonId) {
-            case "help":
-                reply("❓ *Help Menu* \n\nHere’s how you can use the bot...");
-                break;
-            case "owner":
-                reply("👤 *Owner Info* \n\nContact the owner at wa.me/1234567890");
-                break;
-            case "updates":
-                reply("🔔 *Latest Updates* \n\nCheck out the latest bot updates here...");
-                break;
-            default:
-                reply("❌ Unknown button clicked.");
-        }
-
     } catch (e) {
         console.log(e);
-        reply(`❌ Error: ${e}`);
+        reply(`${e}`);
     }
 });
