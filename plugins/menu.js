@@ -1,17 +1,17 @@
 const config = require('../config');
-const { cmd, commands } = require('../command');
+const { cmd } = require('../command');
 
 cmd(
   {
     pattern: 'menu',
-    react: '🇱🇰',
-    desc: 'Get command list',
+    react: '📜',
+    desc: 'Get full command list',
     category: 'main',
     filename: __filename,
   },
-  async (conn, mek, m, { from, pushname, isAdmins, isOwner, args }) => {
+  async (conn, mek, m, { from, pushname, isAdmins, isOwner }) => {
     try {
-      let lang = config.LANGUAGE || "en"; // Default language
+      let lang = config.LANGUAGE || "en";
       let themes = ["🔵 Blue", "🔴 Red", "🟢 Green", "🟣 Purple", "⚫ Black"];
       let selectedTheme = config.THEME || "🔵 Blue";
 
@@ -29,66 +29,53 @@ cmd(
 
       let mode = hour >= 18 || hour < 6 ? '🌙 Dark Mode' : '☀ Light Mode';
 
-      let trendingCommands = ["play", "sticker", "ytmp3", "ytmp4", "gif"];
-      let trendingList = trendingCommands.map((cmd) => `🔥 *${cmd}*`).join("\n");
-
       let userType = isOwner ? '👑 Owner' : isAdmins ? '🔰 Admin' : '👤 User';
 
-      let mainMenu = `╭──────────────❒
-👋 *${greet}, ${pushname}!*  
+      let sections = [
+        {
+          title: "📂 Categories",
+          rows: [
+            { title: "📥 Download", rowId: ".menu download", description: "Download media & files" },
+            { title: "😂 Fun", rowId: ".menu fun", description: "Fun commands & memes" },
+            { title: "🎭 Main", rowId: ".menu main", description: "Core commands" },
+            { title: "👥 Group", rowId: ".menu group", description: "Group management tools" },
+            { title: "👑 Owner", rowId: ".menu owner", description: "Owner-only commands" },
+            { title: "🛠 Convert", rowId: ".menu convert", description: "Convert files & formats" },
+            { title: "🔍 Search", rowId: ".menu search", description: "Web & media search" },
+            { title: "🛑 Other", rowId: ".menu other", description: "Miscellaneous commands" },
+            { title: "📰 News", rowId: ".menu news", description: "Latest news & updates" }
+          ]
+        },
+        {
+          title: "🎨 Themes",
+          rows: themes.map(t => ({ title: t, rowId: `.theme ${t.split(" ")[1].toLowerCase()}` }))
+        },
+        {
+          title: "⚙ Bot Settings",
+          rows: [
+            { title: "🔄 Refresh Menu", rowId: ".menu", description: "Reload the menu" },
+            { title: "📢 Announcements", rowId: ".news", description: "Latest bot updates" },
+            { title: "📜 Help & Support", rowId: ".help", description: "Get bot usage help" }
+          ]
+        }
+      ];
+
+      let listMessage = {
+        text: `👋 *${greet}, ${pushname}!*  
 🔥 *Welcome to MR.NADUWA-V1*  
 📌 *User Type: ${userType}*  
 🎨 *Theme: ${selectedTheme}*  
 🌍 *Language: ${lang.toUpperCase()}*  
 🎭 *Mode: ${mode}*  
-╰──────────────❒
 
-📜 *Trending Commands:*  
-${trendingList}  
+📜 *Choose a category below:*`,
+        footer: "🔧 Powered by MR.NADUWA-V1",
+        title: "📜 MR.NADUWA-V1 Menu",
+        buttonText: "📂 Open Menu",
+        sections
+      };
 
-📜 *Choose a Category:*  
-🔹 Download  
-🔹 Fun  
-🔹 Main  
-🔹 Group  
-🔹 Owner  
-🔹 Convert  
-🔹 Search  
-🔹 Other  
-🔹 News  
-
-📌 *Tap a button below to explore!*  
-> *🔧 Powered by NADUWA*  
-`;
-
-      let buttons = [
-        { buttonId: '.menu download', buttonText: { displayText: '📌 Download' }, type: 1 },
-        { buttonId: '.menu fun', buttonText: { displayText: '📌 Fun' }, type: 1 },
-        { buttonId: '.menu main', buttonText: { displayText: '📌 Main' }, type: 1 },
-        { buttonId: '.menu group', buttonText: { displayText: '📌 Group' }, type: 1 },
-        { buttonId: '.menu owner', buttonText: { displayText: '📌 Owner' }, type: 1 },
-        { buttonId: '.menu convert', buttonText: { displayText: '📌 Convert' }, type: 1 },
-        { buttonId: '.menu search', buttonText: { displayText: '📌 Search' }, type: 1 },
-        { buttonId: '.menu other', buttonText: { displayText: '📌 Other' }, type: 1 },
-        { buttonId: '.menu news', buttonText: { displayText: '📌 News' }, type: 1 },
-        { buttonId: '.menu', buttonText: { displayText: '🔄 Refresh' }, type: 1 }
-      ];
-
-      let themeButtons = themes.map((t) => ({
-        buttonId: `.theme ${t.split(" ")[1].toLowerCase()}`,
-        buttonText: { displayText: t },
-        type: 1,
-      }));
-
-      buttons = [...buttons, ...themeButtons];
-
-      await conn.sendMessage(from, {
-        image: { url: config.ALIVE_IMG || "https://i.imgur.com/AelfOJm.jpeg" }, // Default fallback image
-        caption: mainMenu,
-        footer: "📌 Tap a button below!",
-        buttons: buttons,  // Changed to 'buttons' instead of 'templateButtons'
-        headerType: 1,  // Changed from 4 to 1
-    });
+      await conn.sendMessage(from, listMessage, { quoted: mek });
 
     } catch (e) {
       console.log(e);
