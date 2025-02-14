@@ -1,90 +1,58 @@
-const config = require('../config')
-const { cmd, commands } = require('../command')
+const config = require('../config');
+const { cmd, commands } = require('../command');
 
 cmd({
     pattern: "menu",
-    react: "🇱🇰",
-    desc: "Get full command list",
+    react: "📜",
+    desc: "Display command list",
     category: "main",
     filename: __filename
-},
-async (conn, mek, m, { from, sender, pushname, reply }) => {
+}, async (conn, mek, m, { from, pushname, reply }) => {
     try {
+        // Menu categories with icons
         let menu = {
-            main: [],
-            download: [],
-            fun: [],
-            group: [],
-            owner: [],
-            convert: [],
-            search: [],
-            other: [],
-            news: []
+            main: { title: "🔹 Main Commands", list: "" },
+            download: { title: "📥 Download Commands", list: "" },
+            fun: { title: "🎉 Fun Commands", list: "" },
+            group: { title: "👥 Group Commands", list: "" },
+            owner: { title: "👑 Owner Commands", list: "" },
+            convert: { title: "🔄 Convert Commands", list: "" },
+            search: { title: "🔍 Search Commands", list: "" },
+            other: { title: "⚙️ Other Commands", list: "" },
+            news: { title: "📰 News Commands", list: "" }
         };
 
-        for (let i = 0; i < commands.length; i++) {
-            if (commands[i].pattern && !commands[i].dontAddCommandList) {
-                menu[commands[i].category].push({
-                    title: `🔹 ${commands[i].pattern}`,
-                    description: commands[i].desc || 'No description'
-                });
+        // Categorizing commands
+        for (let cmd of commands) {
+            if (cmd.pattern && !cmd.dontAddCommandList) {
+                if (menu[cmd.category]) {
+                    menu[cmd.category].list += `🔹 *${cmd.pattern}*\n`;
+                } else {
+                    menu.other.list += `🔹 *${cmd.pattern}*\n`;
+                }
             }
         }
 
-        let sections = [
-            {
-                title: "📌 MAIN COMMANDS",
-                rows: menu.main
-            },
-            {
-                title: "📥 DOWNLOAD COMMANDS",
-                rows: menu.download
-            },
-            {
-                title: "😂 FUN COMMANDS",
-                rows: menu.fun
-            },
-            {
-                title: "📢 GROUP COMMANDS",
-                rows: menu.group
-            },
-            {
-                title: "👑 OWNER COMMANDS",
-                rows: menu.owner
-            },
-            {
-                title: "🔄 CONVERT COMMANDS",
-                rows: menu.convert
-            },
-            {
-                title: "🔍 SEARCH COMMANDS",
-                rows: menu.search
-            },
-            {
-                title: "🌐 NEWS COMMANDS",
-                rows: menu.news
-            },
-            {
-                title: "📚 OTHER COMMANDS",
-                rows: menu.other
-            }
-        ];
+        // Building the final menu
+        let menuText = `
+┏━━━━━━━━━━━━━━━┓
+┃  🔥 *COMMAND MENU* 🔥  ┃
+┗━━━━━━━━━━━━━━━┛
 
-        let menuText = `🌟 *Hello ${pushname}* 🌟\n\n`
-            + "Welcome to *Mr.Naduwa V1* Bot! Here is the full command list:\n\n"
-            + "📌 Select a category below to see available commands.";
+👋 Hello, *${pushname}*!  
+Welcome to *Mr. Naduwa's Bot* 🤖  
 
-        let buttonMessage = {
-            text: menuText,
-            footer: "🤖 Powered by Mr Naduwa",
-            buttonText: "Select a Category",
-            sections
-        };
+━━━━━━━━━━━━━━━━━━━━
+${Object.values(menu).map(section => section.list ? `*${section.title}*\n${section.list}` : "").join("\n")}
+━━━━━━━━━━━━━━━━━━━━
 
-        await conn.sendMessage(from, buttonMessage, { quoted: mek });
+⚡ *Powered by Mr. Naduwa* ⚡
+`;
 
-    } catch (e) {
-        console.log(e);
-        reply(`${e}`);
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: menuText }, { quoted: mek });
+
+    } catch (error) {
+        console.error(error);
+        reply(`❌ Error: ${error.message}`);
     }
 });
