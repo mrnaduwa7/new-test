@@ -1,38 +1,97 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
 
-cmd({
-    pattern: "menu",
-    react: "🇱🇰",
-    desc: "Get command list with buttons",
-    category: "main",
-    filename: __filename
-}, async (conn, mek, m, { from, pushname, reply }) => {
+cmd(
+  {
+    pattern: 'menu',
+    react: '🇱🇰',
+    desc: 'Get command list',
+    category: 'main',
+    filename: __filename,
+  },
+  async (conn, mek, m, { from, pushname, isAdmins, isOwner, args }) => {
     try {
-        let buttons = [
-            { buttonId: "main_menu", buttonText: { displayText: "📌 Main Menu" }, type: 1 },
-            { buttonId: "download_menu", buttonText: { displayText: "📥 Download" }, type: 1 },
-            { buttonId: "fun_menu", buttonText: { displayText: "🎮 Fun" }, type: 1 },
-            { buttonId: "group_menu", buttonText: { displayText: "👥 Group" }, type: 1 },
-            { buttonId: "owner_menu", buttonText: { displayText: "👑 Owner" }, type: 1 },
-            { buttonId: "convert_menu", buttonText: { displayText: "🔄 Convert" }, type: 1 },
-            { buttonId: "search_menu", buttonText: { displayText: "🔍 Search" }, type: 1 },
-            { buttonId: "other_menu", buttonText: { displayText: "📚 Other" }, type: 1 },
-            { buttonId: "news_menu", buttonText: { displayText: "📰 News" }, type: 1 }
-        ];
+      let lang = config.LANGUAGE || "en"; // Default language
+      let themes = ["🔵 Blue", "🔴 Red", "🟢 Green", "🟣 Purple", "⚫ Black"];
+      let selectedTheme = config.THEME || "🔵 Blue";
 
-        let message = {
-            image: { url: config.ALIVE_IMG },
-            caption: `👋 *Hello, ${pushname}!* \n\n🔹 *Welcome to Vajira-MD Bot!* \n\n📌 *Select a category from the buttons below to see available commands.*`,
-            footer: "🤖 Powered by Vajira-MD",
-            buttons: buttons,
-            headerType: 4
-        };
+      let greetings = {
+        en: ["Good Morning", "Good Afternoon", "Good Evening"],
+        si: ["සුභ උදෑසනක්", "සුභ දවසක්", "සුභ සැන්දෑවක්"],
+        ta: ["காலை வணக்கம்", "மதிய வணக்கம்", "மாலை வணக்கம்"],
+      };
 
-        await conn.sendMessage(from, message, { quoted: mek });
+      let hour = new Date().getHours();
+      let greet =
+        hour < 12 ? greetings[lang][0] :
+        hour < 18 ? greetings[lang][1] :
+        greetings[lang][2];
+
+      let mode = hour >= 18 || hour < 6 ? '🌙 Dark Mode' : '☀ Light Mode';
+
+      let trendingCommands = ["play", "sticker", "ytmp3", "ytmp4", "gif"];
+      let trendingList = trendingCommands.map((cmd) => `🔥 *${cmd}*`).join("\n");
+
+      let userType = isOwner ? '👑 Owner' : isAdmins ? '🔰 Admin' : '👤 User';
+
+      let themeButtons = themes.map((t) => ({
+        buttonId: `.theme ${t.split(" ")[1].toLowerCase()}`,
+        buttonText: { displayText: t },
+        type: 1,
+      }));
+
+      let mainMenu = `╭──────────────❒
+👋 *${greet}, ${pushname}!*  
+🔥 *Welcome to MR.NADUWA-V1*  
+📌 *User Type: ${userType}*  
+🎨 *Theme: ${selectedTheme}*  
+🌍 *Language: ${lang.toUpperCase()}*  
+🎭 *Mode: ${mode}*  
+╰──────────────❒
+
+📜 *Trending Commands:*  
+${trendingList}  
+
+📜 *Choose a Category:*  
+🔹 Download  
+🔹 Fun  
+🔹 Main  
+🔹 Group  
+🔹 Owner  
+🔹 Convert  
+🔹 Search  
+🔹 Other  
+🔹 News  
+
+📌 *Tap a button below to explore!*  
+> *🔧 Powered by Vajira-MD*  
+`;
+
+      let buttons = [
+        { buttonId: '.menu download', buttonText: { displayText: '📌 Download' }, type: 1 },
+        { buttonId: '.menu fun', buttonText: { displayText: '📌 Fun' }, type: 1 },
+        { buttonId: '.menu main', buttonText: { displayText: '📌 Main' }, type: 1 },
+        { buttonId: '.menu group', buttonText: { displayText: '📌 Group' }, type: 1 },
+        { buttonId: '.menu owner', buttonText: { displayText: '📌 Owner' }, type: 1 },
+        { buttonId: '.menu convert', buttonText: { displayText: '📌 Convert' }, type: 1 },
+        { buttonId: '.menu search', buttonText: { displayText: '📌 Search' }, type: 1 },
+        { buttonId: '.menu other', buttonText: { displayText: '📌 Other' }, type: 1 },
+        { buttonId: '.menu news', buttonText: { displayText: '📌 News' }, type: 1 },
+        { buttonId: '.menu', buttonText: { displayText: '🔄 Refresh' }, type: 1 },
+        ...themeButtons
+      ];
+
+      await conn.sendMessage(from, {
+        image: { url: config.ALIVE_IMG },
+        caption: mainMenu,
+        footer: "📌 Tap a button below!",
+        buttons: buttons,
+        headerType: 4,
+      });
 
     } catch (e) {
-        console.log(e);
-        reply(`${e}`);
+      console.log(e);
+      await conn.sendMessage(from, { text: `❌ Error: ${e}` });
     }
-});
+  }
+);
