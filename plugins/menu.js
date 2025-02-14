@@ -1,4 +1,3 @@
-const config = require('../config')
 const { cmd, commands } = require('../command')
 
 cmd({
@@ -21,30 +20,12 @@ async (conn, mek, m, { from, reply }) => {
             }
         }
 
-        // 🕒 Live Clock
-        function getLiveClock() {
-            let now = new Date();
-            return `🕒 ${now.toLocaleTimeString('en-US', { hour12: true })}`;
-        }
-
-        // ⏳ Countdown Timer
-        function getCountdown() {
-            let now = new Date();
-            let target = new Date();
-            target.setHours(23, 59, 59, 999);
-            let diff = target - now;
-            let hours = Math.floor(diff / (1000 * 60 * 60));
-            let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            return `⏳ *Remaining Time:* ${hours}h ${minutes}m ${seconds}s`;
-        }
-
         // 🔔 Greeting Message
         function getTimeGreeting() {
             let hours = new Date().getHours();
             if (hours < 12) return "🌅 𝔾𝕠𝕠𝕕 𝕄𝕠𝕣𝕟𝕚𝕟𝕘";
             else if (hours < 18) return "☀️ 𝔾𝕠𝕠𝕕 𝔸𝕗𝕥𝕖𝕣𝕟𝕠𝕠𝕟";
-            else return "🌙 𝔾𝕠𝕠𝕕 𝔼𝕧𝕖𝕟𝕚𝕟𝕘";
+            else return "🌙 𝔾𝕠𝕠𝕕 𝕖𝕧𝕖𝕟𝕚𝕟𝕘";
         }
 
         // 🏆 Stylish Menu
@@ -55,33 +36,67 @@ async (conn, mek, m, { from, reply }) => {
         🕒 *Time Now:* ${getLiveClock()}
         ${getCountdown()}
 
-        📌 *𝔽𝕦𝕝𝕝 ℂ𝕠𝕞𝕞𝕒𝕟𝕕 𝕃𝕚𝕤𝕥*
-        ${menu.main}
-
-        🎵 *𝔻𝕠𝕨𝕟𝕝𝕠𝕒𝕕 𝕄𝕖𝕟𝕦*
-        ${menu.download}
-
-        😂 *𝔽𝕦𝕟 𝕄𝕖𝕟𝕦*
-        ${menu.fun}
-
-        👥 *𝔾𝕣𝕠𝕦𝕡 𝕄𝕖𝕟𝕦*
-        ${menu.group}
-
-        💡 *𝕆𝕥𝕙𝕖𝕣𝕤*
-        ${menu.other}
-
-        📅 *𝕆𝕨𝕟𝕖𝕣 𝕄𝕖𝕟𝕦*
-        ${menu.owner}
-
         > *ℙ𝕠𝕨𝕖𝕣𝕖𝕕 𝔹𝕪 𝕄𝕣.ℕ𝕒𝕕𝕦𝕨𝕒 🤖*
         
         ╰───❒ *Enjoy Your Experience!* ❒───╯
         `;
 
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
+        // Button Menu
+        const buttonMessage = {
+            image: { url: config.ALIVE_IMG },
+            caption: madeMenu,
+            footer: 'Click on any button below to explore:',
+            buttons: [
+                { buttonId: 'main', buttonText: { displayText: 'Main Menu' }, type: 1 },
+                { buttonId: 'download', buttonText: { displayText: 'Download Menu' }, type: 1 },
+                { buttonId: 'fun', buttonText: { displayText: 'Fun Menu' }, type: 1 },
+                { buttonId: 'group', buttonText: { displayText: 'Group Menu' }, type: 1 },
+                { buttonId: 'owner', buttonText: { displayText: 'Owner Menu' }, type: 1 },
+                { buttonId: 'other', buttonText: { displayText: 'Other Options' }, type: 1 }
+            ],
+            headerType: 4
+        };
+
+        await conn.sendMessage(from, buttonMessage, { quoted: mek });
 
     } catch (e) {
         console.log(e);
         reply(`${e}`);
     }
+});
+
+// Handle button clicks
+conn.on('interactive', async (mek) => {
+    const { selectedButtonId } = mek.message;
+    
+    let submenuMessage = '';
+    
+    // Send the corresponding submenu based on the button clicked
+    switch (selectedButtonId) {
+        case 'main':
+            submenuMessage = '📜 *Main Menu*\n' + menu.main;
+            break;
+        case 'download':
+            submenuMessage = '📥 *Download Menu*\n' + menu.download;
+            break;
+        case 'fun':
+            submenuMessage = '🎉 *Fun Menu*\n' + menu.fun;
+            break;
+        case 'group':
+            submenuMessage = '👥 *Group Menu*\n' + menu.group;
+            break;
+        case 'owner':
+            submenuMessage = '👑 *Owner Menu*\n' + menu.owner;
+            break;
+        case 'other':
+            submenuMessage = '💡 *Other Options*\n' + menu.other;
+            break;
+        default:
+            submenuMessage = 'Sorry, no menu found!';
+    }
+
+    // Send submenu response
+    await conn.sendMessage(from, {
+        text: submenuMessage
+    }, { quoted: mek });
 });
