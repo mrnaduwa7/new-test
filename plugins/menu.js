@@ -4,65 +4,66 @@ const { cmd, commands } = require('../command');
 cmd({
     pattern: "menu",
     react: "🇱🇰",
-    desc: "Get command list",
+    desc: "Get cmd list",
     category: "main",
     filename: __filename
-},
-async (conn, mek, m, { from, quoted, pushname, reply }) => {
+}, async (conn, mek, m, { from, pushname, reply }) => {
     try {
-        // Step 1: Show Loading Message
-        let loadingMessage = await conn.sendMessage(from, { text: "🔄 *Loading menu...*" }, { quoted: mek });
-
-        // Step 2: Show Animated Loading Effect
-        let loadingStages = ["⌛ Loading", "⌛ Loading.", "⌛ Loading..", "⌛ Loading..."];
-        for (let i = 0; i < loadingStages.length; i++) {
-            await conn.sendMessage(from, { text: loadingStages[i] }, { quoted: mek });
-            await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
-        }
-
-        // Step 3: Build Command List Categories with Buttons
-        let buttons = [];
-        let menuText = `*🔹 Hello ${pushname}, Welcome to MR.NADUWA Bot!* 🔹\n\n`;
-
-        let categories = {
-            main: "📌 Main Commands",
-            download: "📥 Download Commands",
-            fun: "🎭 Fun Commands",
-            group: "👥 Group Commands",
-            owner: "👑 Owner Commands",
-            convert: "🔄 Convert Commands",
-            search: "🔎 Search Commands",
-            other: "📚 Other Commands",
-            news: "📰 News Commands"
+        let menu = {
+            main: '',
+            download: '',
+            fun: '',
+            group: '',
+            owner: '',
+            convert: '',
+            search: '',
+            other: '',
+            news: ''
         };
 
-        for (let category in categories) {
-            let categoryCommands = commands.filter(cmd => cmd.category === category && cmd.pattern && !cmd.dontAddCommandList);
-            
-            if (categoryCommands.length > 0) {
-                menuText += `\n*╭───❒ ${categories[category]} ❒───╮*\n`;
-
-                for (let cmd of categoryCommands) {
-                    let buttonId = cmd.pattern;
-                    menuText += `*➤* ${cmd.pattern}\n`;
-                    buttons.push({ buttonId: buttonId, buttonText: { displayText: `🔹 ${cmd.pattern}` }, type: 1 });
-                }
-
-                menuText += `*╰───────────────────────❒*\n`;
+        // Populate menu categories dynamically
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].pattern && !commands[i].dontAddCommandList) {
+                menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
             }
         }
 
-        // Step 4: Send Menu with Buttons
-        await conn.sendMessage(from, {
-            image: { url: config.ALIVE_IMG },
-            caption: menuText,
-            footer: "Choose a command below 👇",
-            buttons: buttons,
-            headerType: 4
-        }, { quoted: mek });
+        // Function to create a loading animation
+        const loadingAnimation = async () => {
+            let loadingText = "Loading";
+            for (let i = 0; i < 5; i++) {
+                await conn.sendPresenceUpdate('composing', from); // Show typing indicator
+                await reply(loadingText + ".".repeat(i));
+                await new Promise(resolve => setTimeout(resolve, 500)); // Small delay
+            }
+        };
+
+        // Call the loading animation
+        await loadingAnimation();
+
+        // Menu sections with typing effects
+        let sections = [
+            `*╭─────────────────❒*\n\n*⇆ ʜɪɪ ${pushname} ⇆*\n\n*┕─────────────────❒*`,
+            `*🔹 DOWNLOAD COMMANDS:*\n${menu.download || "No commands found"}\n`,
+            `*🎭 FUN COMMANDS:*\n${menu.fun || "No commands found"}\n`,
+            `*🔧 MAIN COMMANDS:*\n${menu.main || "No commands found"}\n`,
+            `*👥 GROUP COMMANDS:*\n${menu.group || "No commands found"}\n`,
+            `*👑 OWNER COMMANDS:*\n${menu.owner || "No commands found"}\n`,
+            `*🔄 CONVERT COMMANDS:*\n${menu.convert || "No commands found"}\n`,
+            `*🔍 SEARCH COMMANDS:*\n${menu.search || "No commands found"}\n`,
+            `*📜 OTHER COMMANDS:*\n${menu.other || "No commands found"}\n`,
+            `*📰 NEWS COMMANDS:*\n${menu.news || "No commands found"}\n\n*🔥 POWERED BY MR NADUWA 🔥*`
+        ];
+
+        // Send menu sections with typing effects
+        for (let section of sections) {
+            await conn.sendPresenceUpdate('composing', from); // Show typing indicator
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for effect
+            await reply(section);
+        }
 
     } catch (e) {
         console.log(e);
-        reply(`❌ Error: ${e}`);
+        reply(`Error: ${e}`);
     }
 });
