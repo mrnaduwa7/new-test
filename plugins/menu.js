@@ -33,8 +33,7 @@ async (conn, mek, m, { from, reply }) => {
 
         *🌟 𝕎𝕖𝕝𝕔𝕠𝕞𝕖 𝕥𝕠 𝕄𝕣.ℕ𝕒𝕕𝕦𝕨𝕒 𝕄𝕖𝕟𝕦 🌟*
         
-        🕒 *Time Now:* ${getLiveClock()}
-        ${getCountdown()}
+       
 
         > *ℙ𝕠𝕨𝕖𝕣𝕖𝕕 𝔹𝕪 𝕄𝕣.ℕ𝕒𝕕𝕦𝕨𝕒 🤖*
         
