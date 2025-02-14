@@ -5,7 +5,7 @@ cmd(
   {
     pattern: 'menu',
     react: '📜',
-    desc: 'Get full command list',
+    desc: 'Get the full command list',
     category: 'main',
     filename: __filename,
   },
@@ -31,51 +31,37 @@ cmd(
 
       let userType = isOwner ? '👑 Owner' : isAdmins ? '🔰 Admin' : '👤 User';
 
-      let sections = [
-        {
-          title: "📂 Categories",
-          rows: [
-            { title: "📥 Download", rowId: ".menu download", description: "Download media & files" },
-            { title: "😂 Fun", rowId: ".menu fun", description: "Fun commands & memes" },
-            { title: "🎭 Main", rowId: ".menu main", description: "Core commands" },
-            { title: "👥 Group", rowId: ".menu group", description: "Group management tools" },
-            { title: "👑 Owner", rowId: ".menu owner", description: "Owner-only commands" },
-            { title: "🛠 Convert", rowId: ".menu convert", description: "Convert files & formats" },
-            { title: "🔍 Search", rowId: ".menu search", description: "Web & media search" },
-            { title: "🛑 Other", rowId: ".menu other", description: "Miscellaneous commands" },
-            { title: "📰 News", rowId: ".menu news", description: "Latest news & updates" }
-          ]
-        },
-        {
-          title: "🎨 Themes",
-          rows: themes.map(t => ({ title: t, rowId: `.theme ${t.split(" ")[1].toLowerCase()}` }))
-        },
-        {
-          title: "⚙ Bot Settings",
-          rows: [
-            { title: "🔄 Refresh Menu", rowId: ".menu", description: "Reload the menu" },
-            { title: "📢 Announcements", rowId: ".news", description: "Latest bot updates" },
-            { title: "📜 Help & Support", rowId: ".help", description: "Get bot usage help" }
-          ]
-        }
-      ];
-
-      let listMessage = {
-        text: `👋 *${greet}, ${pushname}!*  
+      let menuText = `╭──────────────────❒  
+👋 *${greet}, ${pushname}!*  
 🔥 *Welcome to MR.NADUWA-V1*  
 📌 *User Type: ${userType}*  
 🎨 *Theme: ${selectedTheme}*  
 🌍 *Language: ${lang.toUpperCase()}*  
 🎭 *Mode: ${mode}*  
+╰──────────────────❒  
 
-📜 *Choose a category below:*`,
+📜 *Choose a category below:*`;
+
+      let buttons = [
+        { buttonId: '.menu download', buttonText: { displayText: '📥 Download' }, type: 1 },
+        { buttonId: '.menu fun', buttonText: { displayText: '😂 Fun' }, type: 1 },
+        { buttonId: '.menu main', buttonText: { displayText: '🎭 Main' }, type: 1 },
+        { buttonId: '.menu group', buttonText: { displayText: '👥 Group' }, type: 1 },
+        { buttonId: '.menu owner', buttonText: { displayText: '👑 Owner' }, type: 1 },
+        { buttonId: '.menu convert', buttonText: { displayText: '🛠 Convert' }, type: 1 },
+        { buttonId: '.menu search', buttonText: { displayText: '🔍 Search' }, type: 1 },
+        { buttonId: '.menu other', buttonText: { displayText: '🛑 Other' }, type: 1 },
+        { buttonId: '.menu news', buttonText: { displayText: '📰 News' }, type: 1 },
+        { buttonId: '.theme', buttonText: { displayText: '🎨 Change Theme' }, type: 1 },
+        { buttonId: '.menu', buttonText: { displayText: '🔄 Refresh' }, type: 1 }
+      ];
+
+      await conn.sendMessage(from, {
+        text: menuText,
         footer: "🔧 Powered by MR.NADUWA-V1",
-        title: "📜 MR.NADUWA-V1 Menu",
-        buttonText: "📂 Open Menu",
-        sections
-      };
-
-      await conn.sendMessage(from, listMessage, { quoted: mek });
+        buttons: buttons,
+        headerType: 1
+      });
 
     } catch (e) {
       console.log(e);
