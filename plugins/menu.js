@@ -3,11 +3,11 @@ const { cmd, commands } = require('../command');
 
 cmd({
     pattern: "menu",
-    react: "🇱🇰",
-    desc: "Get command list",
+    react: "✅",
+    desc: "Show the main menu",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from, quoted, pushname, reply }) => {
+}, async (conn, mek, m, { from, pushname, reply }) => {
     try {
         let buttonMessage = {
             image: { url: config.ALIVE_IMG },
@@ -35,28 +35,28 @@ cmd({
     }
 });
 
-// Handling Button Clicks
+// ✅ **Handling Button Clicks**
 cmd({
     pattern: "",
     fromMe: false
-}, async (conn, mek, m, { from, buttonId, reply }) => {
+}, async (conn, mek, m, { from, isButton, buttonId, reply }) => {
     try {
-        if (!buttonId) return;
+        if (!isButton) return; // Ensure it's a button interaction
 
         let menus = {
-            menu_owner: "👨‍💻 *Owner Menu*\n- Command 1\n- Command 2\n...",
-            menu_download: "📥 *Download Menu*\n- Command 1\n- Command 2\n...",
-            menu_movie: "🎬 *Movie Menu*\n- Command 1\n- Command 2\n...",
-            menu_convert: "🌐 *Convert Menu*\n- Command 1\n- Command 2\n...",
-            menu_group: "📖 *Group Menu*\n- Command 1\n- Command 2\n...",
-            menu_fun: "🎭 *Fun Menu*\n- Command 1\n- Command 2\n...",
-            menu_search: "🔍 *Search Menu*\n- Command 1\n- Command 2\n...",
-            menu_news: "📰 *News Menu*\n- Command 1\n- Command 2\n...",
-            menu_other: "🔧 *Other Menu*\n- Command 1\n- Command 2\n..."
+            menu_owner: "👨‍💻 *Owner Menu*\n- !owner1\n- !owner2\n...",
+            menu_download: "📥 *Download Menu*\n- !ytmp3\n- !ytmp4\n...",
+            menu_movie: "🎬 *Movie Menu*\n- !imdb\n- !netflix\n...",
+            menu_convert: "🌐 *Convert Menu*\n- !toimg\n- !tomp3\n...",
+            menu_group: "📖 *Group Menu*\n- !kick\n- !add\n...",
+            menu_fun: "🎭 *Fun Menu*\n- !joke\n- !meme\n...",
+            menu_search: "🔍 *Search Menu*\n- !google\n- !wiki\n...",
+            menu_news: "📰 *News Menu*\n- !news\n- !weather\n...",
+            menu_other: "🔧 *Other Menu*\n- !ping\n- !help\n..."
         };
 
         if (menus[buttonId]) {
-            await reply(menus[buttonId]);
+            await reply(menus[buttonId]); // Send the correct menu when a button is clicked
         }
     } catch (e) {
         console.log(e);
