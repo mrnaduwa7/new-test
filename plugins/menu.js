@@ -1,5 +1,5 @@
-const { cmd, commands } = require('../command')
 const config = require('../config')
+const { cmd, commands } = require('../command')
 
 cmd({
     pattern: "menu",
@@ -7,108 +7,70 @@ cmd({
     desc: "get cmd list",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+},
+async (conn, mek, m, { from, reply }) => {
     try {
-        // Menu categories
         let menu = {
-            main: '',
-            download: '',
-            fun: '',
-            group: '',
-            owner: '',
-            convert: '',
-            search: '',
-            other: '',
-            news: ''
+            main: '', download: '', fun: '', group: '', 
+            owner: '', convert: '', search: '', other: '', news: ''
         };
 
-        // Populate menu categories
         for (let i = 0; i < commands.length; i++) {
             if (commands[i].pattern && !commands[i].dontAddCommandList) {
                 menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
             }
         }
 
-        // Generate menu message
-        let madeMenu = `*╭─────────────────❒⁠⁠⁠⁠*
+        // Clock Countdown
+        function getCountdown() {
+            let now = new Date();
+            let target = new Date();
+            target.setHours(23, 59, 59, 999);
+            let diff = target - now;
+            let hours = Math.floor(diff / (1000 * 60 * 60));
+            let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            return `⏳ *Remaining Time:* ${hours}h ${minutes}m ${seconds}s`;
+        }
 
-*⇆ ʜɪɪ ᴍʏ ᴅᴇᴀʀ ғʀɪᴇɴᴅ ⇆*
+        // Morning / Evening / Night
+        function getTimePeriod() {
+            let hours = new Date().getHours();
+            if (hours < 12) return "🌅 𝕌𝕕𝕒𝕤𝕒𝕟𝕒";
+            else if (hours < 18) return "☀️ 𝔻𝕒𝕨𝕒𝕝";
+            else return "🌙 ℝ𝕒𝕚";
+        }
 
-     *${pushname}*
+        let madeMenu = `*╭── ❒ ${getTimePeriod()} ❒ ──╮*
+        
+*🌟 𝙃𝙚𝙡𝙡𝙤, 𝙬𝙚𝙡𝙘𝙤𝙢𝙚 𝙩𝙤 𝙈𝙧.𝙉𝙖𝙙𝙪𝙬𝙖 𝘽𝙤𝙩 𝙈𝙚𝙣𝙪! 🌟*
 
-*┕─────────────────❒*
+${getCountdown()}
 
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━
-   *ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1 ғᴜʟʟ ᴄᴏᴍᴍᴀɴᴅ ʟɪsᴛ*
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━
+*📌 𝔽𝕦𝕝𝕝 ℂ𝕠𝕞𝕞𝕒𝕟𝕕 𝕃𝕚𝕤𝕥 📌*
+${menu.main}
 
-*ᴄʀᴇᴀᴛᴇᴅ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ👨🏻‍💻*`;
+*🎵 𝔻𝕠𝕨𝕟𝕝𝕠𝕒𝕕 𝕄𝕖𝕟𝕦 🎵*
+${menu.download}
 
-        // Create buttons for each category
-        const buttons = [
-            { buttonId: 'download', buttonText: { displayText: 'Download Commands' }, type: 1 },
-            { buttonId: 'fun', buttonText: { displayText: 'Fun Commands' }, type: 1 },
-            { buttonId: 'main', buttonText: { displayText: 'Main Commands' }, type: 1 },
-            { buttonId: 'group', buttonText: { displayText: 'Group Commands' }, type: 1 },
-            { buttonId: 'owner', buttonText: { displayText: 'Owner Commands' }, type: 1 },
-            { buttonId: 'convert', buttonText: { displayText: 'Convert Commands' }, type: 1 },
-            { buttonId: 'search', buttonText: { displayText: 'Search Commands' }, type: 1 },
-            { buttonId: 'other', buttonText: { displayText: 'Other Menu' }, type: 1 },
-            { buttonId: 'news', buttonText: { displayText: 'News Menu' }, type: 1 },
-        ];
+*😂 𝔽𝕦𝕟 𝕄𝕖𝕟𝕦 😂*
+${menu.fun}
 
-        // Create button message
-        const buttonMessage = {
-            text: madeMenu,
-            footer: "Powered by Mr. Nadun",
-            buttons: buttons,
-            headerType: 1
-        };
+*👥 𝔾𝕣𝕠𝕦𝕡 𝕄𝕖𝕟𝕦 👥*
+${menu.group}
 
-        // Send the message with buttons
-        await conn.sendMessage(from, buttonMessage, { quoted: mek });
+*💡 𝕆𝕥𝕙𝕖𝕣𝕤 💡*
+${menu.other}
 
-        // Handle button click events
-        conn.on('message', async (msg) => {
-            if (msg.buttonsResponseMessage) {
-                const buttonId = msg.buttonsResponseMessage.selectedButtonId;
+*📅 𝕆𝕨𝕟𝕖𝕣 𝕄𝕖𝕟𝕦 📅*
+${menu.owner}
 
-                let categoryCommands = '';
-                switch (buttonId) {
-                    case 'download':
-                        categoryCommands = menu.download;
-                        break;
-                    case 'fun':
-                        categoryCommands = menu.fun;
-                        break;
-                    case 'main':
-                        categoryCommands = menu.main;
-                        break;
-                    case 'group':
-                        categoryCommands = menu.group;
-                        break;
-                    case 'owner':
-                        categoryCommands = menu.owner;
-                        break;
-                    case 'convert':
-                        categoryCommands = menu.convert;
-                        break;
-                    case 'search':
-                        categoryCommands = menu.search;
-                        break;
-                    case 'other':
-                        categoryCommands = menu.other;
-                        break;
-                    case 'news':
-                        categoryCommands = menu.news;
-                        break;
-                }
+> *ℙ𝕠𝕨𝕖𝕣𝕖𝕕 𝔹𝕪 𝕄𝕣.ℕ𝕒𝕕𝕦𝕨𝕒 🤖*
+        
+╰─ ❒ *Enjoy Your Experience!* ❒ ─╯
+`;
 
-                if (categoryCommands) {
-                    await conn.sendMessage(from, { text: categoryCommands }, { quoted: mek });
-                }
-            }
-        });
+        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: madeMenu }, { quoted: mek });
 
     } catch (e) {
         console.log(e);
