@@ -4,72 +4,65 @@ const { cmd, commands } = require('../command');
 cmd({
     pattern: "menu",
     react: "🇱🇰",
-    desc: "get cmd list",
+    desc: "Get command list",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from, pushname, reply }) => {
+},
+async (conn, mek, m, { from, quoted, pushname, reply }) => {
     try {
-        let menu = {
-            main: '',
-            download: '',
-            fun: '',
-            group: '',
-            owner: '',
-            convert: '',
-            search: '',
-            other: '',
-            news: ''
+        // Step 1: Show Loading Message
+        let loadingMessage = await conn.sendMessage(from, { text: "🔄 *Loading menu...*" }, { quoted: mek });
+
+        // Step 2: Show Animated Loading Effect
+        let loadingStages = ["⌛ Loading", "⌛ Loading.", "⌛ Loading..", "⌛ Loading..."];
+        for (let i = 0; i < loadingStages.length; i++) {
+            await conn.sendMessage(from, { text: loadingStages[i] }, { quoted: mek });
+            await new Promise(resolve => setTimeout(resolve, 500)); // 500ms delay
+        }
+
+        // Step 3: Build Command List Categories with Buttons
+        let buttons = [];
+        let menuText = `*🔹 Hello ${pushname}, Welcome to MR.NADUWA Bot!* 🔹\n\n`;
+
+        let categories = {
+            main: "📌 Main Commands",
+            download: "📥 Download Commands",
+            fun: "🎭 Fun Commands",
+            group: "👥 Group Commands",
+            owner: "👑 Owner Commands",
+            convert: "🔄 Convert Commands",
+            search: "🔎 Search Commands",
+            other: "📚 Other Commands",
+            news: "📰 News Commands"
         };
 
-        // Populate menu categories dynamically
-        for (let i = 0; i < commands.length; i++) {
-            if (commands[i].pattern && !commands[i].dontAddCommandList) {
-                menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
+        for (let category in categories) {
+            let categoryCommands = commands.filter(cmd => cmd.category === category && cmd.pattern && !cmd.dontAddCommandList);
+            
+            if (categoryCommands.length > 0) {
+                menuText += `\n*╭───❒ ${categories[category]} ❒───╮*\n`;
+
+                for (let cmd of categoryCommands) {
+                    let buttonId = cmd.pattern;
+                    menuText += `*➤* ${cmd.pattern}\n`;
+                    buttons.push({ buttonId: buttonId, buttonText: { displayText: `🔹 ${cmd.pattern}` }, type: 1 });
+                }
+
+                menuText += `*╰───────────────────────❒*\n`;
             }
         }
 
-        let sections = [
-            `*╭─────────────────❒*\n\n*⇆ ʜɪɪ ${pushname} ⇆*\n\n*┕─────────────────❒*`
-        ];
-        
-        const menu1 = `*🔹 DOWNLOAD COMMANDS:*\n${menu.download || "No commands found"}\n`
-        const menu2 = `*🎭 FUN COMMANDS:*\n${menu.fun || "No commands found"}\n`
-        const menu3 = `*🔧 MAIN COMMANDS:*\n${menu.main || "No commands found"}\n`
-        const menu4 = `*👥 GROUP COMMANDS:*\n${menu.group || "No commands found"}\n`
-        const menu5 = `*👑 OWNER COMMANDS:*\n${menu.owner || "No commands found"}\n`
-        const menu6 = `*🔄 CONVERT COMMANDS:*\n${menu.convert || "No commands found"}\n`
-        const menu7 = `*🔍 SEARCH COMMANDS:*\n${menu.search || "No commands found"}\n`
-        const menu8 = `*📜 OTHER COMMANDS:*\n${menu.other || "No commands found"}\n`
-        const menu9 = `*📰 NEWS COMMANDS:*\n${menu.news || "No commands found"}\n\n*🔥 POWERED BY MR NADUWA 🔥*`
-
-const load = 'loading'
-        // Send typing indicator & messages sequentially
-        for (let section of sections) {
-            await conn.sendPresenceUpdate('composing', from); // Show typing indicator
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for effect
-            await reply(section);
-            await reply(load);
-            await reply(menu1);
-            await reply(load);
-            await reply(menu2);
-            await reply(load);
-            await reply(menu3);
-            await reply(load);
-            await reply(menu4);
-            await reply(load);
-            await reply(menu5);
-            await reply(load);
-            await reply(menu6);
-            await reply(load);
-            await reply(menu7);
-            await reply(load);
-            await reply(menu8);
-            await reply(load);
-            await reply(menu9);
-        }
+        // Step 4: Send Menu with Buttons
+        await conn.sendMessage(from, {
+            image: { url: config.ALIVE_IMG },
+            caption: menuText,
+            footer: "Choose a command below 👇",
+            buttons: buttons,
+            headerType: 4
+        }, { quoted: mek });
 
     } catch (e) {
         console.log(e);
-        reply(`Error: ${e}`);
+        reply(`❌ Error: ${e}`);
     }
 });
