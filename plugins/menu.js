@@ -1,5 +1,5 @@
-const config = require('../config');
-const { cmd, commands } = require('../command');
+const { cmd, commands } = require('../command')
+const config = require('../config')
 
 cmd({
     pattern: "menu",
@@ -7,26 +7,9 @@ cmd({
     desc: "get cmd list",
     category: "main",
     filename: __filename
-},
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+}, async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
     try {
-        // Create a bouncing loading effect with color change
-        let loadingMessage = "*Loading your menu...*\n";
-        let loadingDots = ['1', '2', '3', '4', '5', '6'];
-        let loadingAnimation = '';
-        
-        for (let i = 0; i < 5; i++) {
-            for (let dot of loadingDots) {
-                loadingAnimation = `*Loading...* ${dot}`;
-                await conn.sendMessage(from, { text: loadingAnimation, mentions: [sender] });
-                await new Promise(resolve => setTimeout(resolve, 500)); // Wait for half a second before showing next dot
-            }
-        }
-
-        // Personalized Greeting with User Name
-        let greetingMessage = `*Hello ${pushname}!*\nWelcome to your personal menu. Let’s explore the commands!`;
-
-        // Command Categories
+        // Menu categories
         let menu = {
             main: '',
             download: '',
@@ -39,36 +22,96 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
             news: ''
         };
 
+        // Populate menu categories
         for (let i = 0; i < commands.length; i++) {
             if (commands[i].pattern && !commands[i].dontAddCommandList) {
-                menu[commands[i].category] += `${commands[i].pattern}\n`;
+                menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
             }
         }
 
-        // Buttons
-        const buttonMenu = [
-            { buttonId: 'main_commands', buttonText: { displayText: 'Main Commands' }, type: 1 },
-            { buttonId: 'download_commands', buttonText: { displayText: 'Download Commands' }, type: 1 },
-            { buttonId: 'fun_commands', buttonText: { displayText: 'Fun Commands' }, type: 1 },
-            { buttonId: 'group_commands', buttonText: { displayText: 'Group Commands' }, type: 1 },
-            { buttonId: 'owner_commands', buttonText: { displayText: 'Owner Commands' }, type: 1 },
-            { buttonId: 'convert_commands', buttonText: { displayText: 'Convert Commands' }, type: 1 },
-            { buttonId: 'search_commands', buttonText: { displayText: 'Search Commands' }, type: 1 },
-            { buttonId: 'other_commands', buttonText: { displayText: 'Other Commands' }, type: 1 },
-            { buttonId: 'news_commands', buttonText: { displayText: 'News Commands' }, type: 1 }
+        // Generate menu message
+        let madeMenu = `*╭─────────────────❒⁠⁠⁠⁠*
+
+*⇆ ʜɪɪ ᴍʏ ᴅᴇᴀʀ ғʀɪᴇɴᴅ ⇆*
+
+     *${pushname}*
+
+*┕─────────────────❒*
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━
+   *ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1 ғᴜʟʟ ᴄᴏᴍᴍᴀɴᴅ ʟɪsᴛ*
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+*ᴄʀᴇᴀᴛᴇᴅ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ👨🏻‍💻*`;
+
+        // Create buttons for each category
+        const buttons = [
+            { buttonId: 'download', buttonText: { displayText: 'Download Commands' }, type: 1 },
+            { buttonId: 'fun', buttonText: { displayText: 'Fun Commands' }, type: 1 },
+            { buttonId: 'main', buttonText: { displayText: 'Main Commands' }, type: 1 },
+            { buttonId: 'group', buttonText: { displayText: 'Group Commands' }, type: 1 },
+            { buttonId: 'owner', buttonText: { displayText: 'Owner Commands' }, type: 1 },
+            { buttonId: 'convert', buttonText: { displayText: 'Convert Commands' }, type: 1 },
+            { buttonId: 'search', buttonText: { displayText: 'Search Commands' }, type: 1 },
+            { buttonId: 'other', buttonText: { displayText: 'Other Menu' }, type: 1 },
+            { buttonId: 'news', buttonText: { displayText: 'News Menu' }, type: 1 },
         ];
 
-        // Send personalized greeting with buttons
-        await conn.sendMessage(from, {
-            image: { url: config.ALIVE_IMG },
-            caption: greetingMessage,
-            buttons: buttonMenu,
-            footer: 'Powered by Mr. Naduma',
-            headerType: 4
-        }, { quoted: mek });
+        // Create button message
+        const buttonMessage = {
+            text: madeMenu,
+            footer: "Powered by Mr. Nadun",
+            buttons: buttons,
+            headerType: 1
+        };
+
+        // Send the message with buttons
+        await conn.sendMessage(from, buttonMessage, { quoted: mek });
+
+        // Handle button click events
+        conn.on('message', async (msg) => {
+            if (msg.buttonsResponseMessage) {
+                const buttonId = msg.buttonsResponseMessage.selectedButtonId;
+
+                let categoryCommands = '';
+                switch (buttonId) {
+                    case 'download':
+                        categoryCommands = menu.download;
+                        break;
+                    case 'fun':
+                        categoryCommands = menu.fun;
+                        break;
+                    case 'main':
+                        categoryCommands = menu.main;
+                        break;
+                    case 'group':
+                        categoryCommands = menu.group;
+                        break;
+                    case 'owner':
+                        categoryCommands = menu.owner;
+                        break;
+                    case 'convert':
+                        categoryCommands = menu.convert;
+                        break;
+                    case 'search':
+                        categoryCommands = menu.search;
+                        break;
+                    case 'other':
+                        categoryCommands = menu.other;
+                        break;
+                    case 'news':
+                        categoryCommands = menu.news;
+                        break;
+                }
+
+                if (categoryCommands) {
+                    await conn.sendMessage(from, { text: categoryCommands }, { quoted: mek });
+                }
+            }
+        });
 
     } catch (e) {
         console.log(e);
-        reply(`An error occurred: ${e.message}`);
+        reply(`${e}`);
     }
 });
