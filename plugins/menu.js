@@ -34,12 +34,6 @@ cmd(
 
       let userType = isOwner ? '👑 Owner' : isAdmins ? '🔰 Admin' : '👤 User';
 
-      let themeButtons = themes.map((t) => ({
-        buttonId: `.theme ${t.split(" ")[1].toLowerCase()}`,
-        buttonText: { displayText: t },
-        type: 1,
-      }));
-
       let mainMenu = `╭──────────────❒
 👋 *${greet}, ${pushname}!*  
 🔥 *Welcome to MR.NADUWA-V1*  
@@ -64,7 +58,7 @@ ${trendingList}
 🔹 News  
 
 📌 *Tap a button below to explore!*  
-> *🔧 Powered by Vajira-MD*  
+> *🔧 Powered by NADUWA*  
 `;
 
       let buttons = [
@@ -77,17 +71,24 @@ ${trendingList}
         { buttonId: '.menu search', buttonText: { displayText: '📌 Search' }, type: 1 },
         { buttonId: '.menu other', buttonText: { displayText: '📌 Other' }, type: 1 },
         { buttonId: '.menu news', buttonText: { displayText: '📌 News' }, type: 1 },
-        { buttonId: '.menu', buttonText: { displayText: '🔄 Refresh' }, type: 1 },
-        ...themeButtons
+        { buttonId: '.menu', buttonText: { displayText: '🔄 Refresh' }, type: 1 }
       ];
 
+      let themeButtons = themes.map((t) => ({
+        buttonId: `.theme ${t.split(" ")[1].toLowerCase()}`,
+        buttonText: { displayText: t },
+        type: 1,
+      }));
+
+      buttons = [...buttons, ...themeButtons];
+
       await conn.sendMessage(from, {
-        image: { url: config.ALIVE_IMG },
+        image: { url: config.ALIVE_IMG || "https://i.imgur.com/AelfOJm.jpeg" }, // Default fallback image
         caption: mainMenu,
         footer: "📌 Tap a button below!",
-        buttons: buttons,
-        headerType: 4,
-      });
+        buttons: buttons,  // Changed to 'buttons' instead of 'templateButtons'
+        headerType: 1,  // Changed from 4 to 1
+    });
 
     } catch (e) {
       console.log(e);
