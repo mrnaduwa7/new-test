@@ -153,7 +153,15 @@ if(senderNumber.includes("940000000000")){
 if(isReact) return
 m.react("⚖️")
 }
+// Auto-Read Messages
+if (config.AUTO_READ === "true") {
+    await conn.readMessages([mek.key]); // Mark message as read
+}
 
+// Auto-Read Commands Only
+if (isCmd && config.READ_CMD === "true") {
+    await conn.sendReadReceipt(mek.key.remoteJid, mek.key.participant, [mek.key.id]); // Mark command as read
+}
 
         
 
