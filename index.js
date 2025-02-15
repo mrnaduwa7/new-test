@@ -158,10 +158,7 @@ if (config.AUTO_READ === "true") {
     await conn.readMessages([mek.key]); // Mark message as read
 }
 
-// Auto-Read Commands Only
-if (isCmd && config.READ_CMD === "true") {
-    await conn.sendReadReceipt(mek.key.remoteJid, mek.key.participant, [mek.key.id]); // Mark command as read
-}
+
 
         
 
