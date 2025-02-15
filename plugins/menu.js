@@ -42,15 +42,20 @@ cmd({
         const menu8 = `*📜 OTHER COMMANDS:*\n${menu.other || "No commands found"}\n`;
         const menu9 = `*📰 NEWS COMMANDS:*\n${menu.news || "No commands found"}\n\n*🔥 POWERED BY MR NADUWA 🔥*`;
 
-        const progressBar = [
-            "█▒▒▒▒▒▒▒▒▒ 10%",
-            "███▒▒▒▒▒▒▒ 30%",
-            "█████▒▒▒▒▒ 50%",
-            "███████▒▒▒ 70%",
-            "█████████▒ 90%",
-            "██████████ 100%"
+        // Custom Loading Messages
+        const loadingMessages = [
+            "⏳ Processing...",
+            "🔄 Fetching Data...",
+            "✨ Almost Ready...",
+            "🚀 Preparing Commands...",
+            "🔍 Gathering Info...",
+            "⚡ Powering Up..."
         ];
 
+        // Animated Dots Effect
+        const animatedDots = ["•", "••", "•••", "••••", "•••••", "✅"];
+
+        // Random Emoji Effects
         const emojiEffects = ["⚡", "🔥", "🚀", "⏳", "✅", "🔄"];
 
         // Send typing indicator & messages sequentially
@@ -59,9 +64,16 @@ cmd({
             await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for effect
             await reply(section);
 
-            for (let i = 0; i < progressBar.length; i++) {
-                await reply(progressBar[i]);
-                await new Promise(resolve => setTimeout(resolve, 700)); // Simulate loading effect
+            // Animated Dots Effect
+            for (let i = 0; i < animatedDots.length; i++) {
+                await reply(`*Loading ${animatedDots[i]}*`);
+                await new Promise(resolve => setTimeout(resolve, 500)); // Simulate animation
+            }
+
+            // Sending Custom Loading Messages Before Each Menu
+            for (let msg of loadingMessages) {
+                await reply(msg);
+                await new Promise(resolve => setTimeout(resolve, 1000)); // Delay between messages
             }
 
             await reply(menu1);
