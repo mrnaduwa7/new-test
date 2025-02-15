@@ -4,78 +4,72 @@ const { cmd, commands } = require('../command');
 cmd({
     pattern: "menu",
     react: "🇱🇰",
-    desc: "Get full command list",
+    desc: "get cmd list",
     category: "main",
     filename: __filename
-},
-async (conn, mek, m, { from, pushname, reply }) => {
+}, async (conn, mek, m, { from, pushname, reply }) => {
     try {
-        // Create menu object
-        const menuData = {
-            main: [],
-            download: [],
-            fun: [],
-            group: [],
-            owner: [],
-            convert: [],
-            search: [],
-            other: [],
-            news: []
+        let menu = {
+            main: '',
+            download: '',
+            fun: '',
+            group: '',
+            owner: '',
+            convert: '',
+            search: '',
+            other: '',
+            news: ''
         };
 
-        // Populate menu data dynamically
-        for (let cmd of commands) {
-            if (cmd.pattern && !cmd.dontAddCommandList) {
-                menuData[cmd.category].push(cmd.pattern);
+        // Populate menu categories dynamically
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].pattern && !commands[i].dontAddCommandList) {
+                menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
             }
         }
 
-        // Function to generate the menu message
-        function renderMenu(menuData, pushname) {
-            return `*╭───❒ MR.NADUWA-V1 MENU ❒───╮*
+        let sections = [
+            `*╭─────────────────❒*\n\n*⇆ ʜɪɪ ${pushname} ⇆*\n\n*┕─────────────────❒*`
+        ];
+        
+        const menu1 = `*🔹 DOWNLOAD COMMANDS:*\n${menu.download || "No commands found"}\n`
+        const menu2 = `*🎭 FUN COMMANDS:*\n${menu.fun || "No commands found"}\n`
+        const menu3 = `*🔧 MAIN COMMANDS:*\n${menu.main || "No commands found"}\n`
+        const menu4 = `*👥 GROUP COMMANDS:*\n${menu.group || "No commands found"}\n`
+        const menu5 = `*👑 OWNER COMMANDS:*\n${menu.owner || "No commands found"}\n`
+        const menu6 = `*🔄 CONVERT COMMANDS:*\n${menu.convert || "No commands found"}\n`
+        const menu7 = `*🔍 SEARCH COMMANDS:*\n${menu.search || "No commands found"}\n`
+        const menu8 = `*📜 OTHER COMMANDS:*\n${menu.other || "No commands found"}\n`
+        const menu9 = `*📰 NEWS COMMANDS:*\n${menu.news || "No commands found"}\n\n*🔥 POWERED BY MR NADUWA 🔥*`
 
-*👋 Hello, ${pushname}!*  
-Welcome to *MR.NADUWA-V1* Command List  
-
-📌 *Main Commands:*  
-${menuData.main.length ? menuData.main.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-📥 *Download Commands:*  
-${menuData.download.length ? menuData.download.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-🎉 *Fun Commands:*  
-${menuData.fun.length ? menuData.fun.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-👥 *Group Commands:*  
-${menuData.group.length ? menuData.group.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-👑 *Owner Commands:*  
-${menuData.owner.length ? menuData.owner.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-🔄 *Convert Commands:*  
-${menuData.convert.length ? menuData.convert.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-🔎 *Search Commands:*  
-${menuData.search.length ? menuData.search.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-🛠 *Other Commands:*  
-${menuData.other.length ? menuData.other.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-📰 *News Commands:*  
-${menuData.news.length ? menuData.news.map(cmd => `- ${cmd}`).join('\n') : 'No commands available'}
-
-*Powered by MR.NADUWA*
-*╰───❒ END ❒───╯*`;
+const load = 'loading'
+        // Send typing indicator & messages sequentially
+        for (let section of sections) {
+            await conn.sendPresenceUpdate('composing', from); // Show typing indicator
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for effect
+           return await reply(section);
+            return await reply(load);
+           return await reply(menu1);
+           return await reply(load);
+           return await reply(menu2);
+           return await reply(load);
+           return await reply(menu3);
+           return await reply(load);
+           return await reply(menu4);
+           return await reply(load);
+           return await reply(menu5);
+           return await reply(load);
+          return  await reply(menu6);
+           return await reply(load);
+           return await reply(menu7);
+           return await reply(load);
+           return await reply(menu8);
+          return  await reply(load);
+          return  await reply(menu9);
         }
 
-        // Generate the menu text
-        const menuText = renderMenu(menuData, pushname);
-
-        // Send the menu with an image
-        await conn.sendMessage(from, { image: { url: config.ALIVE_IMG }, caption: menuText }, { quoted: mek });
-
     } catch (e) {
-        console.error(e);
-        reply(`Error: ${e.message}`);
+        console.log(e);
+        reply(`Error: ${e}`);
     }
 });
