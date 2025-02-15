@@ -1,13 +1,14 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
+const baileys = require("@whiskeysockets/baileys");
 
 cmd({
     pattern: "menu",
-    react: "🇱🇰",
-    desc: "get cmd list",
+    react: "⚡",
+    desc: "Get the command list",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from, pushname, reply }) => {
+}, async (conn, mek, m, { from, pushname, sender, reply, isAdmin }) => {
     try {
         let menu = {
             main: '',
@@ -24,76 +25,68 @@ cmd({
         // Populate menu categories dynamically
         for (let i = 0; i < commands.length; i++) {
             if (commands[i].pattern && !commands[i].dontAddCommandList) {
-                menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
+                menu[commands[i].category] += `*🔹* ${commands[i].pattern}\n`;
             }
         }
 
-        let sections = [
-            `*╭─────────────────❒*\n\n*⇆ ʜɪɪ ${pushname} ⇆*\n\n*┕─────────────────❒*`
-        ];
-        
-        const menu1 = `*🔹 DOWNLOAD COMMANDS:*\n${menu.download || "No commands found"}\n`;
-        const menu2 = `*🎭 FUN COMMANDS:*\n${menu.fun || "No commands found"}\n`;
-        const menu3 = `*🔧 MAIN COMMANDS:*\n${menu.main || "No commands found"}\n`;
-        const menu4 = `*👥 GROUP COMMANDS:*\n${menu.group || "No commands found"}\n`;
-        const menu5 = `*👑 OWNER COMMANDS:*\n${menu.owner || "No commands found"}\n`;
-        const menu6 = `*🔄 CONVERT COMMANDS:*\n${menu.convert || "No commands found"}\n`;
-        const menu7 = `*🔍 SEARCH COMMANDS:*\n${menu.search || "No commands found"}\n`;
-        const menu8 = `*📜 OTHER COMMANDS:*\n${menu.other || "No commands found"}\n`;
-        const menu9 = `*📰 NEWS COMMANDS:*\n${menu.news || "No commands found"}\n\n*🔥 POWERED BY MR NADUWA 🔥*`;
-
-        // Custom Loading Messages
-        const loadingMessages = [
-            "⏳ Processing...",
-            "🔄 Fetching Data...",
-            "✨ Almost Ready...",
-            "🚀 Preparing Commands...",
-            "🔍 Gathering Info...",
-            "⚡ Powering Up..."
-        ];
+        let userMode = isAdmin ? "👑 Admin Mode" : "👤 User Mode";
 
         // Animated Dots Effect
-        const animatedDots = ["•", "••", "•••", "••••", "•••••", "✅"];
+        const animatedDots = ["•", "••", "•••", "••••", "✅"];
 
-        // Random Emoji Effects
-        const emojiEffects = ["⚡", "🔥", "🚀", "⏳", "✅", "🔄"];
+        // Loading Messages
+        const loadingMessages = [
+            "⏳ Preparing Your Menu...",
+            "🚀 Fetching Commands...",
+            "✨ Almost Ready...",
+            "🔍 Gathering Data...",
+            "✅ Done! Displaying Menu..."
+        ];
 
-        // Send typing indicator & messages sequentially
-        for (let section of sections) {
-            await conn.sendPresenceUpdate('composing', from); // Show typing indicator
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for effect
-            await reply(section);
-
-            // Animated Dots Effect
-            for (let i = 0; i < animatedDots.length; i++) {
-                await reply(`*Loading ${animatedDots[i]}*`);
-                await new Promise(resolve => setTimeout(resolve, 500)); // Simulate animation
-            }
-
-            // Sending Custom Loading Messages Before Each Menu
-            for (let msg of loadingMessages) {
-                await reply(msg);
-                await new Promise(resolve => setTimeout(resolve, 1000)); // Delay between messages
-            }
-
-            await reply(menu1);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu2);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu3);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu4);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu5);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu6);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu7);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu8);
-            await reply(emojiEffects[Math.floor(Math.random() * emojiEffects.length)]);
-            await reply(menu9);
+        // Send typing indicator & loading animation
+        await conn.sendPresenceUpdate('composing', from);
+        for (let i = 0; i < animatedDots.length; i++) {
+            await reply(`*Loading ${animatedDots[i]}*`);
+            await new Promise(resolve => setTimeout(resolve, 500));
         }
+
+        for (let msg of loadingMessages) {
+            await reply(msg);
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        // Custom Button-Based Menu
+        let menuText = `╭━━❰ *MR.NADUWA-V1* ❱━━╮\n\n`
+            + `🎭 *Hello ${pushname}*\n`
+            + `⚙️ Mode: *${userMode}*\n`
+            + `📅 Date: *${new Date().toLocaleDateString()}*\n\n`
+            + `╰━━━━━━━━━━━━━━━━━╯\n\n`
+            + `📌 *Trending Commands:*\n`
+            + `🔹 !sticker - Convert images to stickers\n`
+            + `🔹 !ytmp3 - Download YouTube audio\n`
+            + `🔹 !qr - Generate QR codes\n\n`
+            + `🔰 *Categories:*`;
+
+        let buttons = [
+            { buttonId: "download", buttonText: { displayText: "📥 Download" }, type: 1 },
+            { buttonId: "fun", buttonText: { displayText: "🎭 Fun" }, type: 1 },
+            { buttonId: "main", buttonText: { displayText: "🔧 Main" }, type: 1 },
+            { buttonId: "group", buttonText: { displayText: "👥 Group" }, type: 1 },
+            { buttonId: "owner", buttonText: { displayText: "👑 Owner" }, type: 1 },
+            { buttonId: "convert", buttonText: { displayText: "🔄 Convert" }, type: 1 },
+            { buttonId: "search", buttonText: { displayText: "🔍 Search" }, type: 1 },
+            { buttonId: "other", buttonText: { displayText: "📜 Other" }, type: 1 },
+            { buttonId: "news", buttonText: { displayText: "📰 News" }, type: 1 }
+        ];
+
+        let buttonMessage = {
+            text: menuText,
+            footer: "🔥 Powered by MR.NADUWA-V1",
+            buttons: buttons,
+            headerType: 1
+        };
+
+        await conn.sendMessage(from, buttonMessage, { quoted: mek });
 
     } catch (e) {
         console.log(e);
