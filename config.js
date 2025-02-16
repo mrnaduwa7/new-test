@@ -13,8 +13,8 @@ AUTO_READ_STATUS: process.env.AUTO_READ_STATUS || "true",
 ALWAYS_ONLINE : process.env.ALWAYS_ONLINE || "false",
 AUTO_TYPING: process.env.AUTO_TYPING || "false",
  AUTO_RECORDING: process.env.AUTO_RECORDING || "false",
-AUTO_READ: "true", // Reads all messages
-READ_CMD: "true",   // Reads only commands
+AUTO_READ: "false", // Reads all messages
+READ_CMD: "false",   // Reads only commands
 MODE: process.env.MODE || "private"
 
 };
