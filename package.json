@@ -66,6 +66,7 @@
     "sqlite3": "^5.1.7",
     "vm": "^0.1.0",
     "adm-zip": "latest",
+"moment-timezone": "^0.5.45",
     "cheerio" : "1.0.0"
     
   }
