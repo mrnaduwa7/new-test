@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 import os from 'os';
-import config from '../config.js';
-const { cmd, commands } = require('../command');
+const config = require('../config')
+const {cmd , commands} = require('../command');
 
 // Get system memory details
 const totalMemory = (os.totalmem() / (1024 ** 3)).toFixed(2) + ' GB';
