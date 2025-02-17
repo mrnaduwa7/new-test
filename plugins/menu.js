@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 import os from 'os';
-import config from '../config.cjs';
+import config from '../config.js';
 const { cmd, commands } = require('../command');
 
 // Get system memory details
