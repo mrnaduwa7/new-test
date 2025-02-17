@@ -36,16 +36,16 @@ async (conn, mek, m, {
         const date = moment().tz("Asia/Colombo").format("DD/MM/YYYY");
         const dayOfWeek = moment().tz("Asia/Colombo").format("dddd");
 
-        let greeting = "Good Night 🌌"; // Default greeting
+        let greeting = "සුභ රාත්‍රියක් ළමයෝ 🌌"; // Default greeting
         
         if (time < "05:00:00") {
-            greeting = "Good Morning 🌄";
+            greeting = "සුභ උදෑසනක් ළමයෝ 🌄";
         } else if (time < "11:00:00") {
-            greeting = "Good Morning 🌄";
+            greeting = "සුභ උදෑසනක් ළමයෝ 🌄";
         } else if (time < "15:00:00") {
-            greeting = "Good Afternoon 🌅";
+            greeting = "සුභ දහවලක් ළමයෝ 🌅";
         } else if (time < "19:00:00") {
-            greeting = "Good Evening 🌃";
+            greeting = "සුභ රාත්‍රියක් ළමයෝ 🌃";
         }
 
         let madeMenu = `╭─────────────────────────❒
@@ -55,6 +55,15 @@ async (conn, mek, m, {
         ┕─────────────────────────❒
 
         🌟 ᴄᴏᴍᴍᴀɴᴅs ᴄᴀᴛᴇɢᴏʀɪᴇs 🌟
+
+
+         ┏━━━━━━━━━━━━━━━━━━━━━━━
+        🕰️ *Current Time*: ${time}
+        📅 *Date*: ${date}
+        📆 *Day*: ${dayOfWeek}
+        🤖 *Greeting*: ${greeting}
+        ┛━━━━━━━━━━━━━━━━━━━━━━━
+         
 
         ╭─────────────────────────❒
         │ 🔹 *Download* Commands
@@ -105,13 +114,8 @@ async (conn, mek, m, {
 
         🌟 ᴅᴇᴠᴇʟᴏᴘᴇᴅ ᴡɪᴛʜ ❤️ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ 🌟
 
-        ┏━━━━━━━━━━━━━━━━━━━━━━━
-        🕰️ *Current Time*: ${time}
-        📅 *Date*: ${date}
-        📆 *Day*: ${dayOfWeek}
-        🤖 *Greeting*: ${greeting}
-        ┛━━━━━━━━━━━━━━━━━━━━━━━
-        `;
+        
+ `;
 
         await conn.sendMessage(from, {
             image: { url: config.ALIVE_IMG },
