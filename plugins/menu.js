@@ -1,38 +1,28 @@
-import moment from 'moment-timezone';
-import os from 'os';
-const config = require('../config')
-const {cmd , commands} = require('../command');
-
-// Get system memory details
-const totalMemory = (os.totalmem() / (1024 ** 3)).toFixed(2) + ' GB';
-const freeMemory = (os.freemem() / (1024 ** 3)).toFixed(2) + ' GB';
-
-// Uptime calculation
-const uptime = process.uptime();
-const days = Math.floor(uptime / (24 * 3600));
-const hours = Math.floor((uptime % (24 * 3600)) / 3600);
-const minutes = Math.floor((uptime % 3600) / 60);
-const seconds = Math.floor(uptime % 60);
-
-// Greetings based on time
-const timeNow = moment().tz("Asia/Colombo").format("HH:mm:ss");
-let pushwish = "Good Night 🌌";
-if (timeNow < "05:00:00") pushwish = "Good Morning 🌄";
-else if (timeNow < "11:00:00") pushwish = "Good Morning 🌄";
-else if (timeNow < "15:00:00") pushwish = "Good Afternoon 🌅";
-else if (timeNow < "18:00:00") pushwish = "Good Evening 🌃";
+const config = require('../config');
+const { cmd, commands } = require('../command');
+const moment = require('moment-timezone');
 
 cmd({
     pattern: "menu",
     react: "🇱🇰",
-    desc: "Get command list",
+    desc: "Get the list of all commands",
     category: "main",
     filename: __filename
-}, async (conn, mek, m, { from, pushname, reply }) => {
+},
+async (conn, mek, m, {
+    from, pushname, reply
+}) => {
     try {
         let menu = {
-            main: '', download: '', fun: '', group: '',
-            owner: '', convert: '', search: '', other: '', news: ''
+            main: '',
+            download: '',
+            fun: '',
+            group: '',
+            owner: '',
+            convert: '',
+            search: '',
+            other: '',
+            news: ''
         };
 
         for (let i = 0; i < commands.length; i++) {
@@ -41,68 +31,91 @@ cmd({
             }
         }
 
-        let madeMenu = `╭──────────❒
-│ ${pushwish}, *${pushname}* 👋
-│ 🕒 Time: ${timeNow}
-│ 💾 Total Memory: ${totalMemory}
-│ 🚀 Free Memory: ${freeMemory}
-│ ⏳ Uptime: ${days}d ${hours}h ${minutes}m ${seconds}s
-╰──────────❒
+        // Get the current time, date, and day of the week
+        const time = moment().tz("Asia/Colombo").format("HH:mm:ss");
+        const date = moment().tz("Asia/Colombo").format("DD/MM/YYYY");
+        const dayOfWeek = moment().tz("Asia/Colombo").format("dddd");
 
-┏━━━━━━━━━━━━━━━━━━━
-┃ *🔥 MR.NADUWA-V1 COMMANDS 🔥*
-┗━━━━━━━━━━━━━━━━━━━
+        let greeting = "Good Night 🌌"; // Default greeting
+        
+        if (time < "05:00:00") {
+            greeting = "Good Morning 🌄";
+        } else if (time < "11:00:00") {
+            greeting = "Good Morning 🌄";
+        } else if (time < "15:00:00") {
+            greeting = "Good Afternoon 🌅";
+        } else if (time < "19:00:00") {
+            greeting = "Good Evening 🌃";
+        }
 
-╭───────────────❒
-│ 🌐 *Main Commands*
-╰───────────────❒
-${menu.main}
+        let madeMenu = `╭─────────────────────────❒
+        
+        ➤ ʜɪ ${pushname} 👋🏻 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1
+        
+        ┕─────────────────────────❒
 
-╭───────────────❒
-│ 📥 *Download Commands*
-╰───────────────❒
-${menu.download}
+        🌟 ᴄᴏᴍᴍᴀɴᴅs ᴄᴀᴛᴇɢᴏʀɪᴇs 🌟
 
-╭───────────────❒
-│ 🎭 *Fun Commands*
-╰───────────────❒
-${menu.fun}
+        ╭─────────────────────────❒
+        │ 🔹 *Download* Commands
+        ╰─────────────────────────❒
+        ${menu.download}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *Fun* Commands
+        ╰─────────────────────────❒
+        ${menu.fun}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *Main* Commands
+        ╰─────────────────────────❒
+        ${menu.main}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *Group* Commands
+        ╰─────────────────────────❒
+        ${menu.group}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *Owner* Commands
+        ╰─────────────────────────❒
+        ${menu.owner}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *Convert* Commands
+        ╰─────────────────────────❒
+        ${menu.convert}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *Search* Commands
+        ╰─────────────────────────❒
+        ${menu.search}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *Other* Commands
+        ╰─────────────────────────❒
+        ${menu.other}
+        
+        ╭─────────────────────────❒
+        │ 🔹 *News* Commands
+        ╰─────────────────────────❒
+        ${menu.news}
 
-╭───────────────❒
-│ 👥 *Group Commands*
-╰───────────────❒
-${menu.group}
+        🛠️ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ
 
-╭───────────────❒
-│ 👑 *Owner Commands*
-╰───────────────❒
-${menu.owner}
+        🌟 ᴅᴇᴠᴇʟᴏᴘᴇᴅ ᴡɪᴛʜ ❤️ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ 🌟
 
-╭───────────────❒
-│ 🔄 *Convert Commands*
-╰───────────────❒
-${menu.convert}
+        ┏━━━━━━━━━━━━━━━━━━━━━━━
+        🕰️ *Current Time*: ${time}
+        📅 *Date*: ${date}
+        📆 *Day*: ${dayOfWeek}
+        🤖 *Greeting*: ${greeting}
+        ┛━━━━━━━━━━━━━━━━━━━━━━━
+        `;
 
-╭───────────────❒
-│ 🔍 *Search Commands*
-╰───────────────❒
-${menu.search}
-
-╭───────────────❒
-│ 🔧 *Other Commands*
-╰───────────────❒
-${menu.other}
-
-╭───────────────❒
-│ 📰 *News Commands*
-╰───────────────❒
-${menu.news}
-
-🔹 *Powered by MR.NADUWA* 🔹`;
-
-        await conn.sendMessage(from, { 
-            image: { url: config.ALIVE_IMG }, 
-            caption: madeMenu 
+        await conn.sendMessage(from, {
+            image: { url: config.ALIVE_IMG },
+            caption: madeMenu
         }, { quoted: mek });
 
     } catch (e) {
