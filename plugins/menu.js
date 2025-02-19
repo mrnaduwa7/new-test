@@ -113,7 +113,7 @@ let madeMenu = `╭─────────────━┈⊷
                 },
               ],
             }),
-            contextInfo: {
+            contextInfo {
                   mentionedJid: [m.sender], 
                   forwardingScore: 999,
                   isForwarded: true,
