@@ -24,12 +24,28 @@ other: '',
 news:''
 };
 
+        for (let i = 0; i < commands.length; i++) {
+            if (commands[i].pattern && !commands[i].dontAddCommandList) {
+                menu[commands[i].category] += `┋ ${commands[i].pattern}\n`;
+            }
+        }
 
-for (let i = 0; i < commands.length; i++) {
-if (commands[i].pattern && !commands[i].dontAddCommandList) {
-menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
- }
-}
+        // Get the current time, date, and day of the week
+        const time = moment().tz("Asia/Colombo").format("HH:mm:ss");
+        const date = moment().tz("Asia/Colombo").format("DD/MM/YYYY");
+        const dayOfWeek = moment().tz("Asia/Colombo").format("dddd");
+
+        let greeting = "සුභ රාත්‍රියක් ළමයෝ 🌌"; // Default greeting
+        
+        if (time < "05:00:00") {
+            greeting = "සුභ උදෑසනක් ළමයෝ 🌄";
+        } else if (time < "11:00:00") {
+            greeting = "සුභ උදෑසනක් ළමයෝ 🌄";
+        } else if (time < "15:00:00") {
+            greeting = "සුභ දහවලක් ළමයෝ 🌅";
+        } else if (time < "19:00:00") {
+            greeting = "සුභ රාත්‍රියක් ළමයෝ 🌃";
+        }
         let desc = `*👋🏻 හායි ${pushname}, I AM MR.NADUWA-V1 ♻️*
 
 *Command Panel 💱*
@@ -39,15 +55,15 @@ menu[commands[i].category] += `*┋* ${commands[i].pattern}\n`;
 
 LIST OF MENU ❇️
 *────────────────────────────────*
-*| ➤ 1  || OWNER MENU*
-*| ➤ 2  || CONVERT MENU*
-*| ➤ 3  || MOVIE MENU*
-*| ➤ 4  || DOWNLOAD MENU*
-*| ➤ 5  || GROUP MENU*
-*| ➤ 6  || ANIME MENU*
-*| ➤ 7  || FUN MENU*
-*| ➤ 8  || NEWS MENU*
-*| ➤ 9  || BUG MENU*
+*| ➤ 1  || DOWNLOAD MENU*
+*| ➤ 2  || FUN MENU*
+*| ➤ 3  || MAIN MENU*
+*| ➤ 4  || GROUP  MENU*
+*| ➤ 5  || OWNER MENU*
+*| ➤ 6  || CONVERT MENU*
+*| ➤ 7  || SEARCH MENU*
+*| ➤ 8  || OTHER MENU*
+*| ➤ 9  || NEWS MENU*
 *| ➤10 || OTHER MENU*
 *────────────────────────────────*
 
@@ -89,9 +105,14 @@ _🔢 Reply The Number That You Want_
             if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === vv.key.id) {
                 switch (selectedOption) {
                     case '1':               
-    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `*＿＿＿＿[ ＯＷＮＥＲ  ＭＥＮＵ 🧑🏻‍💻 ]＿＿＿＿*
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `
 
-     ${menu.owner}
+        ╭─────────────────────────❒
+        │ 🇱🇰 *Download* Commands
+        ╰─────────────────────────❒
+        ${menu.download}
+        
+        
 
 > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1*`,
         contextInfo: {
@@ -108,9 +129,12 @@ _🔢 Reply The Number That You Want_
     });
                         break;
                     case '2':
-    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `*＿＿＿＿[ ＣＯＮＶＥＲＴ  ＭＥＮＵ 🔁 ]＿＿＿＿*
-
-    ${memu.convert}
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `
+ ╭─────────────────────────❒
+        │ 🇱🇰 *Fun* Commands
+        ╰─────────────────────────❒
+        ${menu.fun}
+        
 
 *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1*`,
         contextInfo: {
@@ -127,9 +151,13 @@ _🔢 Reply The Number That You Want_
     });
                         break;
                     case '3':
-    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg`},caption: `*＿＿＿＿[ ＭＯＶＩＥ  ＭＥＮＵ 📽️ ]＿＿＿＿*
-
-  ${menu.movie}
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg`},caption: `
+╭─────────────────────────❒
+        │ 🇱🇰 *Main* Commands
+        ╰─────────────────────────❒
+        ${menu.main}
+        
+        
 
 
 > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ*`,
@@ -147,11 +175,13 @@ _🔢 Reply The Number That You Want_
     });
                         break;
                     case '4':
-    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `*＿＿＿＿[ ＤＯＷＮＬＯＡＤ  ＭＥＮＵ 📥 ]＿＿＿＿*
-
-
-
-  ${menu.download}
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `
+ ╭─────────────────────────❒
+        │ 🇱🇰 *Group* Commands
+        ╰─────────────────────────❒
+        ${menu.group}
+         
+    
 
 > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1*`,
         contextInfo: {
@@ -167,12 +197,16 @@ _🔢 Reply The Number That You Want_
         }
     });
                         break;
-                    case '6':
-    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg`},caption: `*＿＿＿＿[ FUN  ＭＥＮＵ 🧚🏻‍♀️ ]＿＿＿＿*
-
-
-   ${menu.fun}
-
+                    case '5':
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg`},caption: `
+  ╭─────────────────────────❒
+        │ 🇱🇰 *Owner* Commands
+        ╰─────────────────────────❒
+        ${menu.owner}
+        
+          
+    
+    
 > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1*`,
         contextInfo: {
             forwardingScore: 0,
@@ -187,12 +221,14 @@ _🔢 Reply The Number That You Want_
         }
     });
                         break;
-                    case '8':
-    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg`},caption: `*＿＿＿＿[ ＮＥＷＳ  ＭＥＮＵ 📃 ]＿＿＿＿*
-
-
-
-  ${menu.news}
+                    case '6':
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg`},caption: `
+  ╭─────────────────────────❒
+        │ 🇱🇰 *Convert* Commands
+        ╰─────────────────────────❒
+        ${menu.convert}
+        
+      
 
 > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ MR.NADUWA-V1*`,
         contextInfo: {
@@ -208,10 +244,13 @@ _🔢 Reply The Number That You Want_
         }
     });
                         break;
-                    case '10':
-    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `*＿＿＿＿[ ＯＴＨＥＲ  ＭＥＮＵ 🐋]＿＿＿＿*
-
-  ${menu.other}
+                    case '7':
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `
+ ╭─────────────────────────❒
+        │ 🇱🇰 *Search* Commands
+        ╰─────────────────────────❒
+        ${menu.search}
+        
 
  
 > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1*`,
@@ -228,6 +267,55 @@ _🔢 Reply The Number That You Want_
         }
     });
  
+                     break;
+                    case '8':
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `
+ ╭─────────────────────────❒
+        │ 🇱🇰 *Other* Commands
+        ╰─────────────────────────❒
+        ${menu.other}
+        
+        
+
+ 
+> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1*`,
+        contextInfo: {
+            forwardingScore: 0,
+            isForwarded: false,
+            externalAdReply: {
+                title: `ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1 🤍`,
+                body: `The Best Multi Device Whatsapp Bot.`,
+                thumbnailUrl: `https://files.catbox.moe/iclcf6.jpeg`,  // Your logo URL
+                mediaType: 1,
+                renderLargerThumbnail: false
+            }
+        }
+    });
+    
+    break;
+                    case '9':
+    await conn.sendMessage(from,{image:{url: `https://files.catbox.moe/iclcf6.jpeg `},caption: `
+╭─────────────────────────❒
+        │ 🇱🇰 *News* Commands
+        ╰─────────────────────────❒
+        ${menu.news}
+
+        
+
+ 
+> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1*`,
+        contextInfo: {
+            forwardingScore: 0,
+            isForwarded: false,
+            externalAdReply: {
+                title: `ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1 🤍`,
+                body: `The Best Multi Device Whatsapp Bot.`,
+                thumbnailUrl: `https://files.catbox.moe/iclcf6.jpeg`,  // Your logo URL
+                mediaType: 1,
+                renderLargerThumbnail: false
+            }
+        }
+    });
                         break;
                     default:
                         reply("Invalid option. Please select a valid option🔴");
@@ -242,3 +330,4 @@ _🔢 Reply The Number That You Want_
         reply('An error occurred while processing your request.');
     }
 });
+
