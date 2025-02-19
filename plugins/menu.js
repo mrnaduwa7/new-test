@@ -108,28 +108,6 @@ let madeMenu = `╭─────────────━┈⊷
                         "description":"🛷 𝐒𝚮𝚯𝐖 𝚳𝚵 𝐂𝚯𝚴𝛁𝚵𝚪𝚻𝚵𝚪 𝚳𝚵𝚴𝐔",
                         "id":"Converter Menu"
                       }
-                    ]}
-                  ]}`
-                },
-              ],
-            }),
-            contextInfo 
-                  mentionedJid: [m.sender], 
-                  forwardingScore: 999,
-                  isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                  newsletterJid: '120363249960769123@newsletter',
-                  newsletterName: "Ethix-MD",
-                  serverMessageId: 143
-                }
-              }
-          }),
-        },
-      },
-    }, {});
-
-    await Matrix.relayMessage(msg.key.remoteJid, msg.message, {
-      messageId: msg.key.id
-    });
-  }
-   
+                    
+                  
+  
