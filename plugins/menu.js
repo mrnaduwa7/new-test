@@ -37,17 +37,7 @@ let madeMenu = `╭─────────────━┈⊷
 │🛡 ᴍᴏᴅᴇ: *${mode}*
 │💫 ᴘʀᴇғɪx: *[Multi-Prefix]*
 ╰─────────────━┈⊷ `
-            }),
-            footer: proto.Message.InteractiveMessage.Footer.create({
-              text: "© Powered By 🇸​​🇮​​🇱​​🇻​​🇦​"
-            }),
-            header: proto.Message.InteractiveMessage.Header.create({
-                ...(await prepareWAMessageMedia({ image : fs.readFileSync('./src/ethix.jpg')}, { upload: Matrix.waUploadToServer})), 
-                  title: ``,
-                  gifPlayback: true,
-                  subtitle: "",
-                  hasMediaAttachment: false  
-                }),
+              
             nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
               buttons: [
                 {
