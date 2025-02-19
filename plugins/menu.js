@@ -5,24 +5,26 @@ const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, fetchJson , runt
 
 cmd({
     pattern: "menu",
-    alias: ["list"],
-    desc: "menu the bot",
-    react: "📜",
-    category: "main"
+    react: "🇱🇰",
+    desc: "Get the list of all commands",
+    category: "main",
+    filename: __filename
 },
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+async (conn, mek, m, {
+    from, pushname, reply
+}) => {
     try {
-    let menu = {
-main: '',
-download: '',
-fun: '',
-group: '',
-owner: '',
-convert: '',
-search: '',
-other: '',
-news:''
-};
+        let menu = {
+            main: '',
+            download: '',
+            fun: '',
+            group: '',
+            owner: '',
+            convert: '',
+            search: '',
+            other: '',
+            news: ''
+        };
 
         for (let i = 0; i < commands.length; i++) {
             if (commands[i].pattern && !commands[i].dontAddCommandList) {
@@ -46,6 +48,7 @@ news:''
         } else if (time < "19:00:00") {
             greeting = "සුභ රාත්‍රියක් ළමයෝ 🌃";
         }
+ 
         let desc = `*👋🏻 හායි ${pushname}, I AM MR.NADUWA-V1 ♻️*
 
 *Command Panel 💱*
