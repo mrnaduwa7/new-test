@@ -109,7 +109,7 @@ let madeMenu = `╭─────────────━┈⊷
                         "id":"Converter Menu"
                       } `
 
-await conn.sendMessage(from,{image:{url:config.ALIVE_IMG},caption:madeMenu},{quoted:mek})
+
 
 }catch(e){
 console.log(e)
