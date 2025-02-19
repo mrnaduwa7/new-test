@@ -1,129 +1,70 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
-const moment = require('moment-timezone');
 
 cmd({
     pattern: "menu",
     react: "🇱🇰",
-    desc: "Get the list of all commands",
+    desc: "Get full command list",
     category: "main",
     filename: __filename
 },
-async (conn, mek, m, {
-    from, pushname, reply
-}) => {
+async (conn, mek, m, { from, pushname, reply }) => {
     try {
+        // Organizing Commands by Category
         let menu = {
-            main: '',
-            download: '',
-            fun: '',
-            group: '',
-            owner: '',
-            convert: '',
-            search: '',
-            other: '',
-            news: ''
+            main: '', download: '', fun: '', group: '',
+            owner: '', convert: '', search: '', other: '', news: ''
         };
 
         for (let i = 0; i < commands.length; i++) {
             if (commands[i].pattern && !commands[i].dontAddCommandList) {
-                menu[commands[i].category] += `┋ ${commands[i].pattern}\n`;
+                menu[commands[i].category] += `*🔹* ${commands[i].pattern}\n`;
             }
         }
 
-        // Get the current time, date, and day of the week
-        const time = moment().tz("Asia/Colombo").format("HH:mm:ss");
-        const date = moment().tz("Asia/Colombo").format("DD/MM/YYYY");
-        const dayOfWeek = moment().tz("Asia/Colombo").format("dddd");
+        // Menu Layout
+        let madeMenu = `╭─────────────────❒\n`
+            + `*👋 Hi ${pushname}, Welcome to MR.NADUWA-V1*\n\n`
+            + `📌 *Version:* 1.0.0\n`
+            + `⚙️ *Runtime:* Online ✅\n`
+            + `📍 *Platform:* Baileys API\n\n`
+            + `🍭 *Have A Nice Day* 🍭\n`
+            + `⚖️ *Powered By - MR.NADUWA-V1* 💚\n`
+            + `╰─────────────────❒\n\n`
+            + `┏━━━━━━━━━━━━━━━━━━━━━━━━━━\n`
+            + `*📜 Full Command List:*\n`
+            + `┗━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`
+            + `📂 *Download Commands:*\n${menu.download}\n`
+            + `🎭 *Fun Commands:*\n${menu.fun}\n`
+            + `🛠️ *Main Commands:*\n${menu.main}\n`
+            + `👥 *Group Commands:*\n${menu.group}\n`
+            + `👑 *Owner Commands:*\n${menu.owner}\n`
+            + `🔄 *Convert Commands:*\n${menu.convert}\n`
+            + `🔎 *Search Commands:*\n${menu.search}\n`
+            + `🔧 *Other Commands:*\n${menu.other}\n`
+            + `📰 *News Commands:*\n${menu.news}\n\n`
+            + `🔹 *Use Buttons Below for Quick Navigation!*\n`;
 
-        let greeting = "සුභ රාත්‍රියක් ළමයෝ 🌌"; // Default greeting
-        
-        if (time < "05:00:00") {
-            greeting = "සුභ උදෑසනක් ළමයෝ 🌄";
-        } else if (time < "11:00:00") {
-            greeting = "සුභ උදෑසනක් ළමයෝ 🌄";
-        } else if (time < "15:00:00") {
-            greeting = "සුභ දහවලක් ළමයෝ 🌅";
-        } else if (time < "19:00:00") {
-            greeting = "සුභ රාත්‍රියක් ළමයෝ 🌃";
-        }
+        // Buttons for Dynamic Menu Navigation
+        const buttons = [
+            { buttonId: 'menu_main', buttonText: { displayText: '📌 MAIN MENU' }, type: 1 },
+            { buttonId: 'menu_download', buttonText: { displayText: '📂 DOWNLOADS' }, type: 1 },
+            { buttonId: 'menu_fun', buttonText: { displayText: '🎭 FUN' }, type: 1 },
+            { buttonId: 'menu_search', buttonText: { displayText: '🔎 SEARCH' }, type: 1 },
+            { buttonId: 'menu_other', buttonText: { displayText: '🔧 OTHERS' }, type: 1 }
+        ];
 
-        let madeMenu = `╭─────────────────────────❒
-        
-        ➤ ʜɪ ${pushname} 👋🏻 ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴍʀ.ɴᴀᴅᴜᴡᴀ-ᴠ1
-        
-        ┕─────────────────────────❒
-
-        🌟 ᴄᴏᴍᴍᴀɴᴅs ᴄᴀᴛᴇɢᴏʀɪᴇs 🌟
-
-
-         ┏━━━━━━━━━━━━━━━━━━━━━━━
-        🕰️ *Current Time*: ${time}
-        📅 *Date*: ${date}
-        📆 *Day*: ${dayOfWeek}
-        🤖 *Greeting*: ${greeting}
-        ┛━━━━━━━━━━━━━━━━━━━━━━━
-         
-
-        ╭─────────────────────────❒
-        │ 🔹 *Download* Commands
-        ╰─────────────────────────❒
-        ${menu.download}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *Fun* Commands
-        ╰─────────────────────────❒
-        ${menu.fun}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *Main* Commands
-        ╰─────────────────────────❒
-        ${menu.main}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *Group* Commands
-        ╰─────────────────────────❒
-        ${menu.group}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *Owner* Commands
-        ╰─────────────────────────❒
-        ${menu.owner}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *Convert* Commands
-        ╰─────────────────────────❒
-        ${menu.convert}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *Search* Commands
-        ╰─────────────────────────❒
-        ${menu.search}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *Other* Commands
-        ╰─────────────────────────❒
-        ${menu.other}
-        
-        ╭─────────────────────────❒
-        │ 🔹 *News* Commands
-        ╰─────────────────────────❒
-        ${menu.news}
-
-        🛠️ ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ
-
-        🌟 ᴅᴇᴠᴇʟᴏᴘᴇᴅ ᴡɪᴛʜ ❤️ ʙʏ ᴍʀ ɴᴀᴅᴜᴡᴀ 🌟
-
-        
- `;
-
+        // Send Menu as an Image with Buttons
         await conn.sendMessage(from, {
             image: { url: config.ALIVE_IMG },
-            caption: madeMenu
+            caption: madeMenu,
+            footer: 'MR.NADUWA-V1 🤖',
+            buttons: buttons,
+            headerType: 4
         }, { quoted: mek });
 
     } catch (e) {
         console.log(e);
-        reply(`Error: ${e}`);
+        reply(`❌ Error: ${e}`);
     }
 });
