@@ -109,11 +109,6 @@ let madeMenu = `╭─────────────━┈⊷
                         "id":"Converter Menu"
                       } `
 
-
-
-}catch(e){
-console.log(e)
-reply(`${e}`)
 }
 })
 
